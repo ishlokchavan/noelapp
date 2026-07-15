@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
-import { View, Image as RNImage, Text, Platform, StyleSheet } from 'react-native';
+import { View, Image as RNImage, Text, Pressable, Platform, StyleSheet } from 'react-native';
 import { BlurView } from 'expo-blur';
-import { Gesture, GestureDetector } from 'react-native-gesture-handler';
-import Animated, { useAnimatedStyle, useSharedValue, withSpring, runOnJS } from 'react-native-reanimated';
+import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { House, Compass, Search, MapPin, User, Landmark } from 'lucide-react-native';
+import { House, Search, MapPin, User, Plus } from 'lucide-react-native';
 import * as Haptics from 'expo-haptics';
+import { router } from 'expo-router';
 import type { BottomTabBarProps } from '@react-navigation/bottom-tabs';
 import { supabase } from '@/lib/supabase';
 import { colors } from '@/theme/tokens';
@@ -34,10 +34,12 @@ try {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const AnimatedGlass: any = GlassViewComp ? Animated.createAnimatedComponent(GlassViewComp) : null;
 
-const ICONS: Record<string, typeof House> = {
-  index: House, trending: Compass, search: Search, map: MapPin, shares: Landmark,
-};
-const FILLABLE: Record<string, boolean> = { index: true, trending: false, search: false, map: true, shares: true };
+const TAB_ICON: Record<string, typeof House> = { index: House, map: MapPin, search: Search };
+const FILLABLE: Record<string, boolean> = { index: true, map: true, search: false };
+/** Tabs shown in the bar, left→right. Anything else (trending, shares) stays hidden. */
+const VISIBLE = ['index', 'map', 'search', 'profile'];
+/** The center ➕ Add-listing action is inserted at this slot (between Map and Search). */
+const ACTION_AT = 2;
 
 const ITEM = 60;
 const CAP_W = 48;
@@ -45,27 +47,39 @@ const CAP_H = 44;
 const PAD = 6;
 const BAR_H = 56;
 const SPRING = { damping: 18, stiffness: 220, mass: 0.6 };
-/** Routes that exist but should not appear in the tab bar. */
-const HIDDEN_TABS = new Set(['trending']);
+
+type Slot =
+  | { kind: 'tab'; key: string; name: string }
+  | { kind: 'action' };
 
 /**
  * Apple liquid-glass tab bar: a floating frosted pill (genuine iOS 26 Liquid
  * Glass when available, BlurView otherwise) with a selection capsule that springs
- * between tabs. Tap a tab, or press-and-drag across the bar to select (haptic on
- * each change). The Profile tab is a circular avatar.
+ * to the active tab. Layout: Home · Map · ➕ · Search · Profile. The ➕ is a
+ * center action that opens the Add-listing flow; Profile is a circular avatar.
  */
 export function GlassTabBar({ state, navigation }: BottomTabBarProps) {
   const insets = useSafeAreaInsets();
-  // Hide certain routes (e.g. trending) from the bar while keeping them navigable.
-  const routes = state.routes.filter((r) => !HIDDEN_TABS.has(r.name));
-  const count = routes.length;
+
+  // Real tab routes, in the VISIBLE order (independent of declaration order).
+  const tabRoutes = VISIBLE
+    .map((name) => state.routes.find((r) => r.name === name))
+    .filter((r): r is NonNullable<typeof r> => Boolean(r));
+
+  // Build the visual slots, injecting the ➕ action at ACTION_AT.
+  const slots: Slot[] = [];
+  tabRoutes.forEach((r) => {
+    if (slots.length === ACTION_AT) slots.push({ kind: 'action' });
+    slots.push({ kind: 'tab', key: r.key, name: r.name });
+  });
+  if (slots.length <= ACTION_AT) slots.push({ kind: 'action' });
+
+  const count = slots.length;
   const activeKey = state.routes[state.index]?.key;
-  const activeIndex = Math.max(0, routes.findIndex((r) => r.key === activeKey));
+  const activeSlot = Math.max(0, slots.findIndex((s) => s.kind === 'tab' && s.key === activeKey));
   const posFor = (i: number) => PAD + i * ITEM + (ITEM - CAP_W) / 2;
 
-  const tx = useSharedValue(posFor(activeIndex));
-  const dragIdx = useSharedValue(activeIndex);
-  const [preview, setPreview] = useState(activeIndex);
+  const tx = useSharedValue(posFor(activeSlot));
 
   // Profile avatar (Instagram-style).
   const [avatar, setAvatar] = useState<string | null>(null);
@@ -81,93 +95,85 @@ export function GlassTabBar({ state, navigation }: BottomTabBarProps) {
   }, []);
 
   useEffect(() => {
-    tx.value = withSpring(posFor(activeIndex), SPRING);
-    dragIdx.value = activeIndex;
-    setPreview(activeIndex);
+    tx.value = withSpring(posFor(activeSlot), SPRING);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeIndex]);
+  }, [activeSlot]);
 
-  function navigateTo(i: number) {
-    const route = routes[i];
-    const focused = activeIndex === i;
-    const e = navigation.emit({ type: 'tabPress', target: route.key, canPreventDefault: true });
-    if (!focused && !e.defaultPrevented) navigation.navigate(route.name);
+  function goToTab(name: string, key: string) {
+    Haptics.selectionAsync();
+    const focused = state.routes[state.index]?.key === key;
+    const e = navigation.emit({ type: 'tabPress', target: key, canPreventDefault: true });
+    if (!focused && !e.defaultPrevented) navigation.navigate(name);
   }
-  const buzz = () => Haptics.selectionAsync();
+  function openAdd() {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
+    router.push('/sell');
+  }
 
-  const pan = Gesture.Pan()
-    .minDistance(8)
-    .onBegin((e) => {
-      'worklet';
-      const i = Math.min(count - 1, Math.max(0, Math.floor((e.x - PAD) / ITEM)));
-      tx.value = withSpring(PAD + i * ITEM + (ITEM - CAP_W) / 2, SPRING);
-      if (i !== dragIdx.value) { dragIdx.value = i; runOnJS(buzz)(); runOnJS(setPreview)(i); }
-    })
-    .onUpdate((e) => {
-      'worklet';
-      const i = Math.min(count - 1, Math.max(0, Math.floor((e.x - PAD) / ITEM)));
-      if (i !== dragIdx.value) {
-        dragIdx.value = i;
-        tx.value = withSpring(PAD + i * ITEM + (ITEM - CAP_W) / 2, SPRING);
-        runOnJS(buzz)(); runOnJS(setPreview)(i);
-      }
-    })
-    .onEnd((e) => {
-      'worklet';
-      const i = Math.min(count - 1, Math.max(0, Math.floor((e.x - PAD) / ITEM)));
-      runOnJS(navigateTo)(i);
-    });
-
-  const tap = Gesture.Tap().onEnd((e) => {
-    'worklet';
-    const i = Math.min(count - 1, Math.max(0, Math.floor((e.x - PAD) / ITEM)));
-    tx.value = withSpring(PAD + i * ITEM + (ITEM - CAP_W) / 2, SPRING);
-    if (i !== dragIdx.value) { dragIdx.value = i; runOnJS(setPreview)(i); }
-    runOnJS(buzz)(); runOnJS(navigateTo)(i);
-  });
-
-  const gesture = Gesture.Race(pan, tap);
   const capStyle = useAnimatedStyle(() => ({ transform: [{ translateX: tx.value }] }));
   const barWidth = count * ITEM + PAD * 2;
 
   const items = (
-    <GestureDetector gesture={gesture}>
-      <View style={{ flexDirection: 'row', height: BAR_H, paddingHorizontal: PAD }}>
-        {routes.map((route, i) => {
-          const active = preview === i;
-          if (route.name === 'profile') {
-            return (
-              <View key={route.key} style={{ width: ITEM, alignItems: 'center', justifyContent: 'center' }}>
-                <View style={{
-                  height: 28, width: 28, borderRadius: 14, overflow: 'hidden',
-                  alignItems: 'center', justifyContent: 'center', backgroundColor: '#e5e5ea',
-                  borderWidth: active ? 2 : 1, borderColor: active ? colors.ink : '#bcbcc0',
-                }}>
-                  {avatar ? (
-                    <RNImage source={{ uri: avatar }} style={{ height: '100%', width: '100%' }} />
-                  ) : initial ? (
-                    <Text style={{ fontSize: 12, fontWeight: '600', color: colors.ink }}>{initial}</Text>
-                  ) : (
-                    <User size={16} color={colors.ink} strokeWidth={2} />
-                  )}
-                </View>
-              </View>
-            );
-          }
-          const Icon = ICONS[route.name] ?? House;
+    <View style={{ flexDirection: 'row', height: BAR_H, paddingHorizontal: PAD }}>
+      {slots.map((slot, i) => {
+        if (slot.kind === 'action') {
           return (
-            <View key={route.key} style={{ width: ITEM, alignItems: 'center', justifyContent: 'center' }}>
-              <Icon
-                size={active ? 27 : 25}
-                color={active ? colors.ink : colors.graphiteLight}
-                strokeWidth={active ? 2.2 : 1.9}
-                fill={active && FILLABLE[route.name] ? colors.ink : 'transparent'}
-              />
-            </View>
+            <Pressable
+              key="action"
+              onPress={openAdd}
+              hitSlop={6}
+              style={{ width: ITEM, alignItems: 'center', justifyContent: 'center' }}
+            >
+              <View style={{
+                height: 38, width: 38, borderRadius: 12,
+                alignItems: 'center', justifyContent: 'center', backgroundColor: colors.ink,
+              }}>
+                <Plus size={22} color="#fff" strokeWidth={2.6} />
+              </View>
+            </Pressable>
           );
-        })}
-      </View>
-    </GestureDetector>
+        }
+        const active = slot.key === activeKey;
+        if (slot.name === 'profile') {
+          return (
+            <Pressable
+              key={slot.key}
+              onPress={() => goToTab(slot.name, slot.key)}
+              style={{ width: ITEM, alignItems: 'center', justifyContent: 'center' }}
+            >
+              <View style={{
+                height: 28, width: 28, borderRadius: 14, overflow: 'hidden',
+                alignItems: 'center', justifyContent: 'center', backgroundColor: '#e5e5ea',
+                borderWidth: active ? 2 : 1, borderColor: active ? colors.ink : '#bcbcc0',
+              }}>
+                {avatar ? (
+                  <RNImage source={{ uri: avatar }} style={{ height: '100%', width: '100%' }} />
+                ) : initial ? (
+                  <Text style={{ fontSize: 12, fontWeight: '600', color: colors.ink }}>{initial}</Text>
+                ) : (
+                  <User size={16} color={colors.ink} strokeWidth={2} />
+                )}
+              </View>
+            </Pressable>
+          );
+        }
+        const Icon = TAB_ICON[slot.name] ?? House;
+        return (
+          <Pressable
+            key={slot.key}
+            onPress={() => goToTab(slot.name, slot.key)}
+            style={{ width: ITEM, alignItems: 'center', justifyContent: 'center' }}
+          >
+            <Icon
+              size={active ? 27 : 25}
+              color={active ? colors.ink : colors.graphiteLight}
+              strokeWidth={active ? 2.2 : 1.9}
+              fill={active && FILLABLE[slot.name] ? colors.ink : 'transparent'}
+            />
+          </Pressable>
+        );
+      })}
+    </View>
   );
 
   const capsule = liquid && AnimatedGlass ? (
