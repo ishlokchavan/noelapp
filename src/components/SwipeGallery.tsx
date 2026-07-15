@@ -41,7 +41,7 @@ export function SwipeGallery({
   height: number;
   indicator?: 'bars' | 'dots' | 'count';
   onDoubleTap?: () => void;
-  onTap?: () => void;
+  onTap?: (index: number) => void;
   contentFit?: 'cover' | 'contain';
   playing?: boolean;
   indicatorTop?: number;
@@ -65,7 +65,7 @@ export function SwipeGallery({
     } else {
       lastTap.current = now;
       if (timer.current) clearTimeout(timer.current);
-      timer.current = setTimeout(() => { onTap?.(); timer.current = null; }, 280);
+      timer.current = setTimeout(() => { onTap?.(index); timer.current = null; }, 280);
     }
   }
   useEffect(() => () => { if (timer.current) clearTimeout(timer.current); }, []);
