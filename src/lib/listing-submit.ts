@@ -19,6 +19,7 @@ export interface SellerIdentity {
 }
 
 export interface PickedPhoto { uri: string; base64?: string | null; mimeType?: string | null }
+export interface PickedMedia { uri: string; mimeType?: string | null; kind: 'image' | 'video'; posterUri?: string }
 export interface PickedDoc { uri: string; name?: string | null; mimeType?: string | null; size?: number | null }
 
 export interface ListingForm {
@@ -112,7 +113,7 @@ async function withRetry<T>(fn: () => Promise<T>, tries = 3): Promise<T> {
  */
 export async function submitListing(
   form: ListingForm,
-  photos: PickedPhoto[],
+  media: PickedMedia[],
   docs: PickedDoc[],
   onProgress?: (done: number, total: number) => void,
 ): Promise<string> {
@@ -122,20 +123,34 @@ export async function submitListing(
 
   const draftId = `${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
   const base = `${user.id}/${draftId}`;
-  const total = photos.length + docs.length;
+
+  const images = media.filter((m) => m.kind === 'image');
+  const videos = media.filter((m) => m.kind === 'video');
+  // A video-only listing has no photo to be the cover — use the first video's
+  // generated poster frame as the cover image so nothing is ever blank.
+  const posterUri = images.length === 0 ? videos.find((v) => v.posterUri)?.posterUri : undefined;
+
+  const total = (posterUri ? 1 : 0) + images.length + videos.length + docs.length;
   let done = 0;
   const tick = () => onProgress?.(++done, total);
 
+  // Photos (images) — proven base64 → storage upload. Poster (if any) leads.
   const photoPaths: string[] = [];
-  for (let i = 0; i < photos.length; i++) {
-    const p = photos[i];
-    const path = `${base}/photos/${i}.${extFor(p.mimeType)}`;
-    const isVideo = (p.mimeType ?? '').includes('video');
-    // Images: the proven base64 → storage upload. Videos: binary stream so large
-    // files don't blow up memory (base64 of a video OOMs).
-    photoPaths.push(await withRetry(() => isVideo
-      ? uploadBinary(path, p.uri, p.mimeType ?? 'video/mp4')
-      : uploadOne(path, p, p.mimeType ?? 'image/jpeg')));
+  if (posterUri) {
+    photoPaths.push(await withRetry(() => uploadOne(`${base}/photos/0.jpg`, { uri: posterUri }, 'image/jpeg')));
+    tick();
+  }
+  for (let i = 0; i < images.length; i++) {
+    const p = images[i];
+    photoPaths.push(await withRetry(() => uploadOne(`${base}/photos/${i}.${extFor(p.mimeType)}`, { uri: p.uri }, p.mimeType ?? 'image/jpeg')));
+    tick();
+  }
+
+  // Videos — binary stream so large files don't blow up memory.
+  const videoPaths: string[] = [];
+  for (let i = 0; i < videos.length; i++) {
+    const v = videos[i];
+    videoPaths.push(await withRetry(() => uploadBinary(`${base}/videos/${i}.${extFor(v.mimeType)}`, v.uri, v.mimeType ?? 'video/mp4')));
     tick();
   }
 
@@ -165,6 +180,7 @@ export async function submitListing(
     contact_email: form.contactEmail,
     contact_phone: form.contactPhone,
     photo_paths: photoPaths,
+    video_paths: videoPaths,
     document_paths: documentPaths,
   }).select('id').single();
   if (error) throw new Error(error.message);

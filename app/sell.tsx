@@ -9,6 +9,7 @@ import { router } from 'expo-router';
 import * as Haptics from 'expo-haptics';
 import * as ImagePicker from 'expo-image-picker';
 import * as DocumentPicker from 'expo-document-picker';
+import * as VideoThumbnails from 'expo-video-thumbnails';
 import {
   X, Home, CheckCircle2, ImagePlus, FileText, Trash2, LogIn, ShieldCheck, Plus, Play,
   ChevronLeft, ChevronRight,
@@ -28,7 +29,7 @@ const FRAME_W = Dimensions.get('window').width - 40;
 const FRAME_H = Math.round(FRAME_W * 5 / 4); // portrait 4:5
 const STEPS = ['media', 'details', 'documents'] as const;
 type Step = (typeof STEPS)[number];
-type Media = { uri: string; mimeType: string; kind: 'image' | 'video' };
+type Media = { uri: string; mimeType: string; kind: 'image' | 'video'; posterUri?: string };
 
 /** List-your-property — a 3-step, Instagram-style flow: media → details → docs. */
 export default function SellScreen() {
@@ -79,11 +80,22 @@ export default function SellScreen() {
     if (res.canceled) return;
     // Accept everything — the portrait frame below crops to a 4:5 section, so we
     // never reject a landscape photo/video; it's just shown cropped to portrait.
-    const picked: Media[] = res.assets.map((a) => ({
-      uri: a.uri,
-      mimeType: a.mimeType ?? (a.type === 'video' ? 'video/mp4' : 'image/jpeg'),
-      kind: a.type === 'video' ? 'video' : 'image',
-    }));
+    // Videos get a generated poster frame so they never render blank.
+    const picked: Media[] = [];
+    for (const a of res.assets) {
+      const isVideo = a.type === 'video';
+      let posterUri: string | undefined;
+      if (isVideo) {
+        try { posterUri = (await VideoThumbnails.getThumbnailAsync(a.uri, { time: 1000, quality: 0.7 })).uri; }
+        catch { /* poster is best-effort */ }
+      }
+      picked.push({
+        uri: a.uri,
+        mimeType: a.mimeType ?? (isVideo ? 'video/mp4' : 'image/jpeg'),
+        kind: isVideo ? 'video' : 'image',
+        posterUri,
+      });
+    }
     setMedia((prev) => [...prev, ...picked].slice(0, MAX_MEDIA));
   }
   function removeMedia(i: number) { setMedia((prev) => prev.filter((_, j) => j !== i)); setMediaIdx(0); }
@@ -218,10 +230,12 @@ export default function SellScreen() {
                       {m.kind === 'image' ? (
                         <Image source={{ uri: m.uri }} style={{ width: FRAME_W, height: FRAME_H }} contentFit="cover" />
                       ) : (
-                        <View className="flex-1 items-center justify-center">
-                          <View className="h-16 w-16 items-center justify-center rounded-full bg-white/15"><Play size={30} color="#fff" fill="#fff" /></View>
-                          <Text className="mt-3 text-[13px] font-medium text-white/80">Video</Text>
-                        </View>
+                        <>
+                          {m.posterUri ? <Image source={{ uri: m.posterUri }} style={{ width: FRAME_W, height: FRAME_H }} contentFit="cover" /> : null}
+                          <View className="absolute inset-0 items-center justify-center">
+                            <View className="h-16 w-16 items-center justify-center rounded-full bg-black/45"><Play size={30} color="#fff" fill="#fff" /></View>
+                          </View>
+                        </>
                       )}
                       <View className="absolute left-3 top-3 rounded-full bg-black/50 px-2.5 py-1"><Text className="text-[11px] font-semibold text-white">{i + 1}/{media.length}</Text></View>
                       <Pressable onPress={() => removeMedia(i)} className="absolute right-3 top-3 h-8 w-8 items-center justify-center rounded-full bg-black/55"><X size={16} color="#fff" /></Pressable>

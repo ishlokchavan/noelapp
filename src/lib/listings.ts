@@ -111,6 +111,27 @@ export async function fetchCarouselImages(reference?: string): Promise<Record<st
   }
 }
 
+/** reference -> ordered video URLs, from the live `listing_videos` table. */
+export async function fetchCarouselVideos(reference?: string): Promise<Record<string, string[]>> {
+  if (!isSupabaseConfigured()) return {};
+  try {
+    let query = supabase
+      .from('listing_videos')
+      .select('reference,url,position')
+      .order('position', { ascending: true });
+    if (reference) query = query.eq('reference', reference);
+    const { data, error } = await query;
+    if (error || !data) return {};
+    const map: Record<string, string[]> = {};
+    for (const r of data as { reference: string; url: string }[]) {
+      (map[r.reference] ??= []).push(r.url);
+    }
+    return map;
+  } catch {
+    return {};
+  }
+}
+
 /** Fetch active listings from Supabase, falling back to seed data. */
 export async function getListings(filters: ListingFilters = {}, locale = 'en'): Promise<Listing[]> {
   if (isSupabaseConfigured()) {

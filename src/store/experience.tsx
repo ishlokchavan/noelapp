@@ -1,5 +1,5 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
-import { getListings, fetchCarouselImages } from '@/lib/listings';
+import { getListings, fetchCarouselImages, fetchCarouselVideos } from '@/lib/listings';
 import { toExperienceListing, FALLBACK_EXPERIENCE_LISTINGS } from '@/data/experience-data';
 import type { ExperienceListing } from '@/types/listing';
 
@@ -26,11 +26,12 @@ export function ExperienceProvider({ children }: { children: React.ReactNode }) 
 
   const load = useCallback(async () => {
     try {
-      const [live, extras] = await Promise.all([
+      const [live, extras, vids] = await Promise.all([
         getListings({ purpose: 'sale', limit: 50 }),
         fetchCarouselImages(),
+        fetchCarouselVideos(),
       ]);
-      if (live.length) setListings(live.map((l) => toExperienceListing(l, extras[l.reference])));
+      if (live.length) setListings(live.map((l) => toExperienceListing(l, extras[l.reference], vids[l.reference])));
     } catch {
       /* keep current/seed */
     }
