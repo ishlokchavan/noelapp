@@ -199,16 +199,19 @@ export async function getMyListings(): Promise<MyListing[]> {
   return Promise.all(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (rows as any[]).map(async (r) => {
-      const photos: string[] = r.photo_paths ?? [];
+      const media: string[] = r.photo_paths ?? [];
+      // Thumbnail the first actual image — a video can't render as an <Image>.
+      const isVideo = (p: string) => /\.(mp4|mov)$/i.test(p);
+      const firstImage = media.find((p) => !isVideo(p)) ?? null;
       let thumbUrl: string | null = null;
-      if (photos[0]) {
-        const { data } = await supabase.storage.from(BUCKET).createSignedUrl(photos[0], 3600);
+      if (firstImage) {
+        const { data } = await supabase.storage.from(BUCKET).createSignedUrl(firstImage, 3600);
         thumbUrl = data?.signedUrl ?? null;
       }
       return {
         id: r.id, title: r.title, propertyType: r.property_type, community: r.community, city: r.city,
         priceAed: Number(r.price_aed), status: r.status as SubmissionStatus,
-        photoCount: photos.length, docCount: (r.document_paths ?? []).length,
+        photoCount: media.length, docCount: (r.document_paths ?? []).length,
         createdAt: r.created_at, thumbUrl,
       };
     }),
