@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import {
   View, Text, TextInput, Pressable, ScrollView, Alert,
-  KeyboardAvoidingView, Platform, ActivityIndicator,
+  KeyboardAvoidingView, Platform, ActivityIndicator, Dimensions,
 } from 'react-native';
 import { Image } from 'expo-image';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -10,11 +10,11 @@ import * as Haptics from 'expo-haptics';
 import * as ImagePicker from 'expo-image-picker';
 import * as DocumentPicker from 'expo-document-picker';
 import {
-  X, Home, CheckCircle2, ImagePlus, FileText, Trash2, LogIn, ShieldCheck, Plus,
+  X, Home, CheckCircle2, ImagePlus, FileText, Trash2, LogIn, ShieldCheck, Plus, Play,
 } from 'lucide-react-native';
 import {
   getSellerIdentity, submitListing,
-  type SellerIdentity, type PickedPhoto, type PickedDoc,
+  type SellerIdentity, type PickedDoc,
 } from '@/lib/listing-submit';
 import { GlassBg } from '@/components/Glass';
 import { colors } from '@/theme/tokens';
@@ -22,7 +22,14 @@ import { colors } from '@/theme/tokens';
 const PROPERTY_TYPES = ['apartment', 'villa', 'townhouse', 'penthouse', 'plot', 'office'];
 const fmtSize = (b?: number | null) => (b == null ? '' : b > 1e6 ? `${(b / 1e6).toFixed(1)} MB` : `${Math.max(1, Math.round(b / 1e3))} KB`);
 
-/** List-your-property flow (modal, sale only) — uploads photos + documents on-platform. */
+const MAX_MEDIA = 10;
+const FRAME_W = Dimensions.get('window').width - 40; // ScrollView padding is 20 each side
+const FRAME_H = Math.round(FRAME_W * 5 / 4); // portrait 4:5, like an Instagram post
+
+type Media = { uri: string; mimeType: string; kind: 'image' | 'video' };
+
+/** List-your-property flow (modal, sale only) — an Instagram-style portrait
+ *  carousel of photos + videos, plus ownership documents. Everything on-platform. */
 export default function SellScreen() {
   const insets = useSafeAreaInsets();
   const [identity, setIdentity] = useState<SellerIdentity | null>(null);
@@ -44,7 +51,8 @@ export default function SellScreen() {
   const [contactName, setContactName] = useState('');
   const [contactEmail, setContactEmail] = useState('');
   const [contactPhone, setContactPhone] = useState('');
-  const [photos, setPhotos] = useState<PickedPhoto[]>([]);
+  const [media, setMedia] = useState<Media[]>([]);
+  const [mediaIdx, setMediaIdx] = useState(0);
   const [docs, setDocs] = useState<PickedDoc[]>([]);
 
   useEffect(() => {
@@ -59,14 +67,28 @@ export default function SellScreen() {
     });
   }, []);
 
-  async function pickPhotos() {
+  async function pickMedia() {
     const perm = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (!perm.granted) { Alert.alert('Allow photos', 'Enable photo access to add images of your property.'); return; }
+    if (!perm.granted) { Alert.alert('Allow access', 'Enable photo & video access to add media of your property.'); return; }
     const res = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ['images'], allowsMultipleSelection: true, selectionLimit: 12, quality: 0.7, base64: true,
+      mediaTypes: ['images', 'videos'], allowsMultipleSelection: true, selectionLimit: MAX_MEDIA, quality: 0.7,
     });
     if (res.canceled) return;
-    setPhotos((prev) => [...prev, ...res.assets.map((a) => ({ uri: a.uri, base64: a.base64, mimeType: a.mimeType }))].slice(0, 15));
+    let skipped = 0;
+    const picked: Media[] = [];
+    for (const a of res.assets) {
+      // Portrait only — landscape is skipped so the feed stays full-screen vertical.
+      if (a.width && a.height && a.width > a.height) { skipped++; continue; }
+      const isVideo = a.type === 'video';
+      picked.push({ uri: a.uri, mimeType: a.mimeType ?? (isVideo ? 'video/mp4' : 'image/jpeg'), kind: isVideo ? 'video' : 'image' });
+    }
+    setMedia((prev) => [...prev, ...picked].slice(0, MAX_MEDIA));
+    if (skipped) Alert.alert('Portrait only', `${skipped} landscape ${skipped === 1 ? 'item was' : 'items were'} skipped. Add photos and videos shot in portrait.`);
+  }
+
+  function removeMedia(i: number) {
+    setMedia((prev) => prev.filter((_, j) => j !== i));
+    setMediaIdx(0);
   }
 
   async function pickDocs() {
@@ -82,8 +104,8 @@ export default function SellScreen() {
     if (!title.trim() || !community.trim() || !price.trim()) {
       Alert.alert('Missing details', 'Add at least a title, community and price.'); return;
     }
-    if (photos.length === 0) { Alert.alert('Add photos', 'Please add at least one photo of the property.'); return; }
-    setBusy(true); setProgress({ done: 0, total: photos.length + docs.length });
+    if (media.length === 0) { Alert.alert('Add media', 'Add at least one portrait photo or video of the property.'); return; }
+    setBusy(true); setProgress({ done: 0, total: media.length + docs.length });
     try {
       await submitListing(
         {
@@ -93,7 +115,7 @@ export default function SellScreen() {
           areaSqft: area ? Number(area.replace(/[^0-9]/g, '')) : null, description: description.trim(),
           contactName: contactName.trim(), contactEmail: contactEmail.trim(), contactPhone: contactPhone.trim(),
         },
-        photos, docs, (d, t) => setProgress({ done: d, total: t }),
+        media, docs, (d, t) => setProgress({ done: d, total: t }),
       );
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       setDone(true);
@@ -125,9 +147,9 @@ export default function SellScreen() {
         </View>
         <View className="flex-1 items-center justify-center gap-4 px-8">
           <View className="h-16 w-16 items-center justify-center rounded-full bg-journey-listing/30"><Home size={30} color={colors.ink} /></View>
-          <Text className="text-center text-2xl font-bold text-ink">List your home in minutes</Text>
+          <Text className="text-center text-2xl font-bold text-ink">Post your home like a story</Text>
           <Text className="text-center text-base text-graphite">
-            Add your photos and ownership documents securely — it all happens through Noel. Our team verifies and publishes your home.
+            Add a carousel of portrait photos and videos, tell buyers about it, and our team verifies and publishes your home.
           </Text>
           {ready && !identity ? (
             <Pressable onPress={() => { router.back(); router.push('/(tabs)/profile'); }} className="mt-2 w-full flex-row items-center justify-center gap-2 rounded-apple bg-ink py-4">
@@ -135,7 +157,7 @@ export default function SellScreen() {
             </Pressable>
           ) : (
             <Pressable disabled={!ready} onPress={() => setStarted(true)} className="mt-2 w-full rounded-apple bg-ink py-4">
-              <Text className="text-center font-semibold text-white">{ready ? 'Start a listing' : 'Loading…'}</Text>
+              <Text className="text-center font-semibold text-white">{ready ? 'Create a listing' : 'Loading…'}</Text>
             </Pressable>
           )}
         </View>
@@ -152,6 +174,62 @@ export default function SellScreen() {
       </View>
 
       <ScrollView contentContainerStyle={{ padding: 20, paddingBottom: insets.bottom + 24 }} keyboardShouldPersistTaps="handled">
+        {/* Media carousel — Instagram-style, portrait only */}
+        <View className="mb-1 flex-row items-center justify-between">
+          <Text className="text-sm font-medium text-graphite">Photos & videos</Text>
+          <Text className="text-xs text-graphiteLight">{media.length}/{MAX_MEDIA} · portrait</Text>
+        </View>
+
+        {media.length === 0 ? (
+          <Pressable
+            onPress={pickMedia}
+            style={{ width: FRAME_W, height: FRAME_H }}
+            className="items-center justify-center gap-2 self-center rounded-3xl border border-dashed border-graphiteLight/60 bg-white/60"
+          >
+            <ImagePlus size={30} color={colors.accent} />
+            <Text className="text-[15px] font-semibold text-ink">Add photos & videos</Text>
+            <Text className="text-[12px] text-graphiteLight">Portrait only — just like a post</Text>
+          </Pressable>
+        ) : (
+          <View>
+            <ScrollView
+              horizontal pagingEnabled showsHorizontalScrollIndicator={false}
+              onMomentumScrollEnd={(e) => setMediaIdx(Math.round(e.nativeEvent.contentOffset.x / FRAME_W))}
+              style={{ width: FRAME_W, height: FRAME_H, borderRadius: 24 }}
+              className="self-center overflow-hidden"
+            >
+              {media.map((m, i) => (
+                <View key={m.uri + i} style={{ width: FRAME_W, height: FRAME_H }} className="bg-ink">
+                  {m.kind === 'image' ? (
+                    <Image source={{ uri: m.uri }} style={{ width: FRAME_W, height: FRAME_H }} contentFit="cover" />
+                  ) : (
+                    <View className="flex-1 items-center justify-center">
+                      <View className="h-16 w-16 items-center justify-center rounded-full bg-white/15"><Play size={30} color="#fff" fill="#fff" /></View>
+                      <Text className="mt-3 text-[13px] font-medium text-white/80">Video</Text>
+                    </View>
+                  )}
+                  <View className="absolute left-3 top-3 rounded-full bg-black/50 px-2.5 py-1"><Text className="text-[11px] font-semibold text-white">{i + 1}/{media.length}</Text></View>
+                  <Pressable onPress={() => removeMedia(i)} className="absolute right-3 top-3 h-8 w-8 items-center justify-center rounded-full bg-black/55"><X size={16} color="#fff" /></Pressable>
+                </View>
+              ))}
+            </ScrollView>
+
+            {/* Dots + add-more */}
+            <View className="mt-3 flex-row items-center justify-center gap-1.5">
+              {media.map((_, i) => (
+                <View key={i} style={{ height: 6, width: i === mediaIdx ? 16 : 6, borderRadius: 3 }} className={i === mediaIdx ? 'bg-ink' : 'bg-hairline'} />
+              ))}
+            </View>
+            {media.length < MAX_MEDIA ? (
+              <Pressable onPress={pickMedia} className="mt-3 flex-row items-center justify-center gap-2 rounded-2xl border border-dashed border-graphiteLight/60 bg-white/60 py-3">
+                <Plus size={16} color={colors.accent} /><Text className="text-[13.5px] font-medium text-ink">Add more</Text>
+              </Pressable>
+            ) : null}
+          </View>
+        )}
+
+        {/* Details */}
+        <View className="mt-6" />
         <Field label="Title" value={title} onChangeText={setTitle} placeholder="e.g. Bright 2BR with Marina view" />
 
         <Text className="mb-1.5 text-sm font-medium text-graphite">Property type</Text>
@@ -176,27 +254,8 @@ export default function SellScreen() {
           placeholderTextColor={colors.graphiteLight}
           className="mb-5 min-h-[96px] rounded-apple border border-white/60 bg-white/70 px-4 py-3 text-base text-ink" style={{ textAlignVertical: 'top' }} />
 
-        {/* Photos */}
-        <View className="mb-1 flex-row items-center justify-between">
-          <Text className="text-sm font-medium text-graphite">Photos</Text>
-          <Text className="text-xs text-graphiteLight">{photos.length}/15</Text>
-        </View>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 10, paddingVertical: 8 }}>
-          <Pressable onPress={pickPhotos} className="h-24 w-24 items-center justify-center gap-1 rounded-2xl border border-dashed border-graphiteLight/60 bg-white/60">
-            <ImagePlus size={22} color={colors.accent} /><Text className="text-[11px] text-graphite">Add</Text>
-          </Pressable>
-          {photos.map((p, i) => (
-            <View key={p.uri + i} className="relative h-24 w-24 overflow-hidden rounded-2xl">
-              <Image source={{ uri: p.uri }} style={{ width: '100%', height: '100%' }} contentFit="cover" />
-              <Pressable onPress={() => setPhotos((prev) => prev.filter((_, j) => j !== i))} className="absolute right-1 top-1 h-6 w-6 items-center justify-center rounded-full bg-black/55">
-                <X size={13} color="#fff" />
-              </Pressable>
-            </View>
-          ))}
-        </ScrollView>
-
         {/* Ownership documents */}
-        <View className="mb-1 mt-4 flex-row items-center gap-1.5">
+        <View className="mb-1 mt-1 flex-row items-center gap-1.5">
           <ShieldCheck size={15} color={colors.accent} />
           <Text className="text-sm font-medium text-graphite">Ownership documents</Text>
         </View>

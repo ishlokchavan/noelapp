@@ -59,7 +59,12 @@ async function uploadOne(path: string, file: { uri: string; base64?: string | nu
 }
 
 const extFor = (mime?: string | null) =>
-  mime?.includes('png') ? 'png' : mime?.includes('webp') ? 'webp' : mime?.includes('heic') ? 'heic' : 'jpg';
+  mime?.includes('png') ? 'png'
+    : mime?.includes('webp') ? 'webp'
+      : mime?.includes('heic') ? 'heic'
+        : mime?.includes('quicktime') || mime?.includes('mov') ? 'mov'
+          : mime?.includes('mp4') || mime?.includes('video') ? 'mp4'
+            : 'jpg';
 
 /**
  * Upload everything then insert the submission. Reports coarse progress so the
