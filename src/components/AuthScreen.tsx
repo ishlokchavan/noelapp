@@ -86,11 +86,26 @@ export function AuthScreen() {
     if (!email || !password) return Alert.alert('Auth', 'Enter your email and password.');
     setBusy(true);
     try {
-      const { error } = mode === 'login'
-        ? await supabase.auth.signInWithPassword({ email: email.trim(), password })
-        : await supabase.auth.signUp({ email: email.trim(), password });
-      if (error) Alert.alert('Auth', error.message);
-      else if (mode === 'signup') Alert.alert('Check your inbox', 'Confirm your email to finish creating your account.');
+      if (mode === 'login') {
+        const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
+        if (error) Alert.alert('Sign in', error.message);
+        return;
+      }
+      const { data, error } = await supabase.auth.signUp({ email: email.trim(), password });
+      const dup = (m?: string) => !!m && /already|exists|registered/i.test(m);
+      if (error) {
+        Alert.alert('Create account', dup(error.message) ? 'That email already has an account. Try signing in instead.' : error.message);
+        if (dup(error.message)) setMode('login');
+        return;
+      }
+      // With email confirmations on, signing up with an existing address returns
+      // a user that has no linked identities — surface it as "already registered".
+      if (data.user && (data.user.identities?.length ?? 0) === 0) {
+        Alert.alert('Email already registered', 'That email already has an account. Try signing in instead.');
+        setMode('login');
+        return;
+      }
+      Alert.alert('Check your inbox', 'Confirm your email to finish creating your account.');
     } finally {
       setBusy(false);
     }
