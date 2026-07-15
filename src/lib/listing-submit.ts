@@ -1,6 +1,7 @@
 import { decode } from 'base64-arraybuffer';
 import * as FileSystem from 'expo-file-system/legacy';
 import { supabase } from './supabase';
+import { SUPABASE_URL, SUPABASE_ANON_KEY } from './config';
 
 /**
  * Seller listing submissions — uploads photos + ownership documents to the
@@ -23,6 +24,9 @@ export interface PickedDoc { uri: string; name?: string | null; mimeType?: strin
 export interface ListingForm {
   title: string;
   propertyType: string;
+  purpose: 'sale' | 'rent';
+  completion: 'ready' | 'off_plan';
+  category: 'residential' | 'commercial';
   community: string;
   city: string;
   priceAed: number;
@@ -58,6 +62,28 @@ async function uploadOne(path: string, file: { uri: string; base64?: string | nu
   return path;
 }
 
+/**
+ * Stream a file straight to Storage (no base64 in memory). Reliable for large
+ * photos and especially VIDEOS, which OOM the base64 path. Uploads with the
+ * signed-in user's token so the per-user-folder RLS still holds.
+ */
+async function uploadBinary(path: string, uri: string, contentType: string): Promise<string> {
+  const { data } = await supabase.auth.getSession();
+  const token = data.session?.access_token ?? SUPABASE_ANON_KEY;
+  const res = await FileSystem.uploadAsync(`${SUPABASE_URL}/storage/v1/object/${BUCKET}/${path}`, uri, {
+    httpMethod: 'POST',
+    uploadType: FileSystem.FileSystemUploadType.BINARY,
+    headers: {
+      Authorization: `Bearer ${token}`,
+      apikey: SUPABASE_ANON_KEY,
+      'Content-Type': contentType,
+      'x-upsert': 'true',
+    },
+  });
+  if (res.status >= 300) throw new Error(`Upload failed (${res.status})`);
+  return path;
+}
+
 const extFor = (mime?: string | null) =>
   mime?.includes('png') ? 'png'
     : mime?.includes('webp') ? 'webp'
@@ -89,7 +115,8 @@ export async function submitListing(
   const photoPaths: string[] = [];
   for (let i = 0; i < photos.length; i++) {
     const p = photos[i];
-    photoPaths.push(await uploadOne(`${base}/photos/${i}.${extFor(p.mimeType)}`, p, p.mimeType ?? 'image/jpeg'));
+    // Binary stream — handles large photos and videos without a base64 blow-up.
+    photoPaths.push(await uploadBinary(`${base}/photos/${i}.${extFor(p.mimeType)}`, p.uri, p.mimeType ?? 'image/jpeg'));
     tick();
   }
 
@@ -105,6 +132,9 @@ export async function submitListing(
     user_id: user.id,
     title: form.title,
     property_type: form.propertyType,
+    purpose: form.purpose,
+    completion: form.completion,
+    category: form.category,
     community: form.community,
     city: form.city,
     price_aed: form.priceAed,
