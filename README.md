@@ -1,6 +1,6 @@
-# noelapp — Native App (Expo / React Native)
+# Noel — Native App (Expo / React Native)
 
-A genuine native iOS + Android app for the noelapp `/experience`. The screens are
+A genuine native iOS + Android app for the Noel `/experience`. The screens are
 native (not a WebView): native navigation, gestures, a snap-paging discovery
 feed, native maps, haptics, and Supabase auth. It talks to your **existing**
 Next.js backend — the `/api/glass/*` routes and Supabase project are reused as-is.
@@ -103,7 +103,7 @@ In the Supabase dashboard → **Authentication → URL Configuration**, add to
 **Redirect URLs**:
 
 ```
-iclose://auth-callback
+noelapp://auth-callback
 exp://*            # optional: lets OAuth work in Expo Go during dev
 ```
 
@@ -121,9 +121,9 @@ eas submit --platform ios       # uploads to App Store Connect
 eas submit --platform android    # uploads to Play Console
 ```
 
-The `assets/` set is noelapp-branded: an `n.` monogram (ink `#1d1d1f` + accent
+The `assets/` set is Noel-branded: an `N.` monogram (ink `#1d1d1f` + accent
 `#0071e3` on white) for `icon.png` / `adaptive-icon.png` / `favicon.png`, and a
-centred `noelapp` wordmark for `splash.png`. The adaptive icon keeps the mark
+centred `Noel` wordmark for `splash.png`. The adaptive icon keeps the mark
 inside the Android mask safe zone. Swap these for higher-fidelity brand artwork
 any time — keep `icon.png`/`adaptive-icon.png` at 1024×1024 and re-export via
 `npx expo-asset` or any 1024px source.

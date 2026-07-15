@@ -91,7 +91,7 @@ export default function KycModal() {
             {accredited ? <Check size={14} color="#fff" /> : null}
           </View>
           <Text className="flex-1 text-[12.5px] leading-4 text-graphite">
-            I confirm the details above are mine and I agree to the noelapp Shares terms.
+            I confirm the details above are mine and I agree to the Noel Shares terms.
           </Text>
         </Pressable>
 

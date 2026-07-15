@@ -1,8 +1,8 @@
-# noelapp Shares — Tokenized Real Estate Module
+# Noel Shares — Tokenized Real Estate Module
 
 > **Implemented ✅ (branch `claude/bold-maxwell-pdqlsb`).** Final user-facing name
 > is **"Shares"** (tab) — chosen over "Mint"/"Tokens" to avoid confusion with
-> noelapp **credits**. The token/ledger mechanics described below run under the
+> Noel **credits**. The token/ledger mechanics described below run under the
 > hood unchanged. What shipped:
 > - DB: 6 `shares_*` tables + hash-linked ledger + 9 atomic RPCs + 8 seeded
 >   offerings (live Supabase, additive, RLS + column-grant hardened, advisors clean).
@@ -44,8 +44,8 @@ production, UAE-compliant product while moving **no real money**:
 - **No In-App Purchase, no real payment rails** → avoids securities / IAP
   policy issues. A demo wallet is pre-funded with play money (e.g. AED 100,000).
 
-Working product name: **noelapp Mint** · tab label **"Invest"**.
-(Alternatives if you prefer: tab "Mint" / "Tokens"; product "noelapp Invest".)
+Working product name: **Noel Mint** · tab label **"Invest"**.
+(Alternatives if you prefer: tab "Mint" / "Tokens"; product "Noel Invest".)
 
 ---
 

@@ -1,4 +1,4 @@
-# noelapp — Backup & Restore Runbook
+# Noel — Backup & Restore Runbook
 
 > Snapshot taken **2026-07-05**, before starting a new version of the platform.
 > This document is the single source of truth for what exists and how to back

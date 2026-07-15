@@ -116,7 +116,7 @@ export default function FeedScreen() {
 
       {/* Wordmark */}
       <View pointerEvents="none" style={{ position: 'absolute', top: insets.top + 8, left: 20 }}>
-        <Text className="text-xl font-bold text-white">noelapp</Text>
+        <Text className="text-xl font-bold text-white">Noel</Text>
       </View>
 
       {/* Center tabs — Ready / Off-plan (Instagram-style) */}

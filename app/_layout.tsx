@@ -46,7 +46,7 @@ export default function RootLayout() {
                   <Stack.Screen name="sell" options={{ presentation: 'modal' }} />
                   <Stack.Screen name="my-listings" options={{ presentation: 'card', animation: 'slide_from_right' }} />
                   <Stack.Screen name="saved" options={{ presentation: 'modal' }} />
-                  {/* noelapp Shares (tokenized real estate) */}
+                  {/* Noel Shares (tokenized real estate) */}
                   <Stack.Screen name="shares/[symbol]" options={{ presentation: 'card', animation: 'slide_from_right' }} />
                   <Stack.Screen name="shares/market" options={{ presentation: 'card', animation: 'slide_from_right' }} />
                   <Stack.Screen name="shares/portfolio" options={{ presentation: 'card', animation: 'slide_from_right' }} />

@@ -63,7 +63,7 @@ const VIDEO_MAP: Record<string, string[]> = {
   'IC-1010': [`${VID}/hf_20260617_042823_fbadb123-28e2-44e8-9f08-0d6b14ed96cc.mp4`],
 };
 
-/** Commission rate noelapp rebates as credits (mirror of the web). */
+/** Commission rate Noel rebates as credits (mirror of the web). */
 const DEV_COMMISSION: Record<string, number> = {
   Binghatti: 6.5,
   Emaar: 5,

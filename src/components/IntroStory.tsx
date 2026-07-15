@@ -21,7 +21,7 @@ const DO_CARDS = [
 
 const USPS = [
   { Icon: BadgePercent, title: 'Zero commission', line: 'Buy, sell or close — you never pay a cut.' },
-  { Icon: Coins, title: 'Cashback credits', line: 'Earn noelapp credits worth real money on every deal.' },
+  { Icon: Coins, title: 'Cashback credits', line: 'Earn Noel credits worth real money on every deal.' },
   { Icon: ShieldCheck, title: 'Verified listings', line: 'Real, RERA-checked homes. No fake leads.' },
   { Icon: Building2, title: 'Off-plan launches', line: 'Early access and special pricing on new launches.' },
 ];
@@ -79,7 +79,7 @@ export function IntroStory({ onDone }: { onDone?: () => void }) {
             <View style={{ paddingTop: insets.top + 72 }}>
               {item === 'hero' ? (
                 <>
-                  <Text className="text-[17px] font-medium text-ink/40">noelapp</Text>
+                  <Text className="text-[17px] font-medium text-ink/40">Noel</Text>
                   <Text className="mt-8 text-[38px] font-normal leading-tight text-ink">
                     Never pay commission to <Text className="font-bold">buy</Text>, <Text className="font-bold">sell</Text>, or <Text className="font-bold">close</Text> ever again.
                   </Text>
@@ -110,7 +110,7 @@ export function IntroStory({ onDone }: { onDone?: () => void }) {
                 </>
               ) : (
                 <>
-                  <Text className="text-[28px] font-semibold leading-tight text-ink">Why noelapp?</Text>
+                  <Text className="text-[28px] font-semibold leading-tight text-ink">Why Noel?</Text>
                   <Text className="mt-2 text-[15px] text-ink/50">Built to put money back in your pocket.</Text>
                   <View className="mt-6 gap-3">
                     {USPS.map(({ Icon, title, line }) => (

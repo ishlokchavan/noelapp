@@ -123,7 +123,7 @@ export default function ProfileScreen() {
   function confirmDelete() {
     Alert.alert(
       'Delete account',
-      'This permanently deletes your noelapp account and your saved data. This cannot be undone.',
+      'This permanently deletes your Noel account and your saved data. This cannot be undone.',
       [
         { text: 'Cancel', style: 'cancel' },
         { text: 'Delete account', style: 'destructive', onPress: deleteAccount },
@@ -205,7 +205,7 @@ export default function ProfileScreen() {
 
       {/* Credits balance */}
       <View className="mb-4 rounded-apple border border-white/60 bg-white/70 p-5">
-        <View className="flex-row items-center gap-2"><Coins size={16} color={colors.accent} /><Text className="text-[13px] text-graphite">noelapp credits balance</Text></View>
+        <View className="flex-row items-center gap-2"><Coins size={16} color={colors.accent} /><Text className="text-[13px] text-graphite">Noel credits balance</Text></View>
         <Text className="mt-1.5 text-[34px] font-semibold text-ink">0</Text>
         {pendingCredits > 0 ? <Text className="mt-1 text-[13px] text-graphite">{formatCredits(pendingCredits)} credits waiting across your shortlist</Text> : null}
       </View>

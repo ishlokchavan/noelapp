@@ -1,14 +1,14 @@
 import type { ExpoConfig } from 'expo/config';
 
 /**
- * noelapp — native app config.
+ * Noel — native app config.
  * Bundle id com.noelapp.app (reverse-DNS of noelapp.com). Custom scheme `noelapp`
  * powers OAuth deep links (noelapp://auth-callback).
  * Brand-new App Store app — distinct from the legacy iClose app (ae.iclose.app),
  * which stays live. Backend (iclose-academy-db Supabase + iclose.ae API) is shared.
  */
 const config: ExpoConfig = {
-  name: 'noelapp',
+  name: 'Noel',
   slug: 'noelapp',
   // owner cleared for the new app — `eas init` associates it with your Expo account.
   scheme: 'noelapp',
@@ -35,7 +35,7 @@ const config: ExpoConfig = {
     config: { usesNonExemptEncryption: false },
     infoPlist: {
       NSLocationWhenInUseUsageDescription:
-        'noelapp uses your location to show nearby homes on the map.',
+        'Noel uses your location to show nearby homes on the map.',
     },
   },
   android: {
@@ -54,13 +54,13 @@ const config: ExpoConfig = {
     'expo-router',
     'expo-secure-store',
     'expo-video',
-    ['expo-image-picker', { photosPermission: 'noelapp needs access to your photos so you can add them to your property listing.' }],
+    ['expo-image-picker', { photosPermission: 'Noel needs access to your photos so you can add them to your property listing.' }],
     ['expo-splash-screen', { backgroundColor: '#ffffff', image: './assets/splash.png', resizeMode: 'contain' }],
   ],
   experiments: { typedRoutes: true },
   extra: {
     apiBaseUrl: process.env.EXPO_PUBLIC_API_BASE_URL ?? 'https://iclose.ae',
-    // Live noelapp database (iclose-academy-db). The anon key is a publishable,
+    // Live Noel database (iclose-academy-db). The anon key is a publishable,
     // RLS-protected client key — safe to ship, same as the web app.
     supabaseUrl:
       process.env.EXPO_PUBLIC_SUPABASE_URL ?? 'https://nnkicmfsdbfpucfcnutn.supabase.co',
