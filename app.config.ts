@@ -10,7 +10,7 @@ import type { ExpoConfig } from 'expo/config';
 const config: ExpoConfig = {
   name: 'Noel',
   slug: 'noelapp',
-  // owner cleared for the new app — `eas init` associates it with your Expo account.
+  owner: 'shlokchavan.personal',
   scheme: 'noelapp',
   version: '1.0.0',
   orientation: 'portrait',
@@ -67,9 +67,8 @@ const config: ExpoConfig = {
     supabaseAnonKey:
       process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY ??
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5ua2ljbWZzZGJmcHVjZmNudXRuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg2ODkyMDcsImV4cCI6MjA5NDI2NTIwN30.liASHVfCZQsB4OFwhY6uBYuv99IWXaMBbGGgbuFiKTs',
-    // eas.projectId cleared — run `eas init` to create a fresh EAS project for
-    // the new app and paste the generated id back here (dynamic app.config.ts
-    // isn't auto-written by eas init).
+    // EAS project for the new Noel app (@shlokchavan.personal/noelapp).
+    eas: { projectId: '681d6f23-d39d-4407-b850-d7fafe484335' },
     // Feature flags. `shares` gates the tokenized real-estate module (6th tab +
     // /shares routes). Off => the module is fully hidden; the build under App
     // Store review ships with it off and is never affected.
