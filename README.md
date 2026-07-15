@@ -121,9 +121,12 @@ eas submit --platform ios       # uploads to App Store Connect
 eas submit --platform android    # uploads to Play Console
 ```
 
-Replace the placeholder icons in `assets/` with real noelapp artwork derived from
-`public/logo.svg` (1024×1024 `icon.png`, `adaptive-icon.png`, and `splash.png`).
-`npx expo-asset` or any 1024px export works.
+The `assets/` set is noelapp-branded: an `n.` monogram (ink `#1d1d1f` + accent
+`#0071e3` on white) for `icon.png` / `adaptive-icon.png` / `favicon.png`, and a
+centred `noelapp` wordmark for `splash.png`. The adaptive icon keeps the mark
+inside the Android mask safe zone. Swap these for higher-fidelity brand artwork
+any time — keep `icon.png`/`adaptive-icon.png` at 1024×1024 and re-export via
+`npx expo-asset` or any 1024px source.
 
 ## Notes
 
