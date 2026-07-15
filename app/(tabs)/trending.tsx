@@ -3,11 +3,11 @@ import { Image } from 'expo-image';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Flame, CalendarClock, Wallet, Coins, ArrowUpRight } from 'lucide-react-native';
+import { Flame, CalendarClock, Wallet, ArrowUpRight } from 'lucide-react-native';
 import { useExperience } from '@/store/experience';
 import { usePullRefresh } from '@/lib/use-refresh';
 import { GlassBg } from '@/components/Glass';
-import { formatAed, formatCredits } from '@/data/experience-data';
+import { formatAed } from '@/data/experience-data';
 import { colors } from '@/theme/tokens';
 
 /** Trending — latest off-plan launches, with a stories rail (mirrors the web). */
@@ -61,12 +61,7 @@ export default function TrendingScreen() {
               </View>
             </View>
             <View className="p-4">
-              <View className="flex-row items-center justify-between">
-                <Text className="text-lg font-semibold text-ink">from {formatAed(l.priceAed)}</Text>
-                <View className="flex-row items-center gap-1 rounded-full bg-accent/10 px-2.5 py-1">
-                  <Coins size={13} color={colors.accent} /><Text className="text-xs font-semibold text-accent">{formatCredits(l.credit.credits)}</Text>
-                </View>
-              </View>
+              <Text className="text-lg font-semibold text-ink">from {formatAed(l.priceAed)}</Text>
               <Text className="mt-1 text-[15px] font-medium text-ink">{l.title}</Text>
               <Text className="text-[13px] text-graphite">{l.community}, {l.city}</Text>
               <View className="mt-3 flex-row flex-wrap items-center gap-3 border-t border-hairline/60 pt-3">

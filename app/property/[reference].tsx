@@ -5,7 +5,7 @@ import { useLocalSearchParams, router } from 'expo-router';
 import * as Haptics from 'expo-haptics';
 import {
   ChevronLeft, ChevronRight, Heart, Share2, BedDouble, Bath, Maximize, MapPin, BadgeCheck,
-  CalendarClock, Wallet, Building2, Navigation, Coins, Phone,
+  CalendarClock, Wallet, Building2, Navigation, Phone,
 } from 'lucide-react-native';
 import { Share } from 'react-native';
 import { WhatsAppIcon } from '@/components/icons/WhatsApp';
@@ -15,7 +15,7 @@ import { useSignals } from '@/store/signals';
 import { usePullRefresh } from '@/lib/use-refresh';
 import { SwipeGallery } from '@/components/SwipeGallery';
 import { Loading } from '@/components/Loading';
-import { formatAed, formatCredits } from '@/data/experience-data';
+import { formatAed } from '@/data/experience-data';
 import { facetsOf } from '@/lib/recommender';
 import { slugifyDeveloper } from '@/lib/slug';
 import { bedLabel } from '@/lib/format';
@@ -119,20 +119,6 @@ export default function PropertyScreen() {
             <Text className="text-sm text-graphite">{listing.building ? `${listing.building}, ` : ''}{listing.community}, {listing.city}</Text>
           </View>
 
-          {/* Credits panel */}
-          <View className="overflow-hidden rounded-apple border border-accent/20 bg-accent/5">
-            <View className="flex-row items-center gap-2.5 px-4 py-3.5">
-              <View className="h-10 w-10 items-center justify-center rounded-full bg-accent/15"><Coins size={20} color={colors.accent} /></View>
-              <View className="flex-1">
-                <Text className="text-xs text-graphite">Buy this home and get</Text>
-                <Text className="text-xl font-bold text-accent">{formatCredits(listing.credit.credits)} Noel credits</Text>
-              </View>
-            </View>
-            <Text className="border-t border-accent/15 px-4 py-2.5 text-xs text-graphite">
-              Credits are yours to keep and spend on Noel — that's the commission you'd normally lose.
-            </Text>
-          </View>
-
           {/* Spec grid */}
           <View className="flex-row gap-2.5">
             <SpecTile icon={<BedDouble size={20} color={colors.ink} />} label="Bedrooms" value={bedLabel(listing.bedrooms)} />
@@ -199,7 +185,7 @@ export default function PropertyScreen() {
             <View className="flex-1">
               <Text className="text-[15px] font-medium text-ink" numberOfLines={1}>{listing.agentName ?? listing.developerName ?? 'Noel listing'}</Text>
               <Text className="text-[13px] text-graphite" numberOfLines={1}>
-                {listing.agencyName ?? (listing.source === 'owner' ? 'Listed by owner · commission-free' : 'Developer direct')}
+                {listing.agencyName ?? (listing.source === 'owner' ? 'Listed by owner' : 'Developer direct')}
               </Text>
             </View>
             <View className="rounded-full bg-mist px-3 py-1"><Text className="text-xs text-graphite">{listing.reference}</Text></View>

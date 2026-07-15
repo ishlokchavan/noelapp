@@ -3,12 +3,12 @@ import { View, Text, FlatList, Pressable, RefreshControl } from 'react-native';
 import { Image } from 'expo-image';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useLocalSearchParams, router } from 'expo-router';
-import { ChevronLeft, BadgeCheck, Building2, MapPin, Coins } from 'lucide-react-native';
+import { ChevronLeft, BadgeCheck, Building2, MapPin } from 'lucide-react-native';
 import { useExperience } from '@/store/experience';
 import { usePullRefresh } from '@/lib/use-refresh';
 import { GlassBg } from '@/components/Glass';
 import { slugifyDeveloper } from '@/lib/slug';
-import { formatAed, formatCredits } from '@/data/experience-data';
+import { formatAed } from '@/data/experience-data';
 import { colors } from '@/theme/tokens';
 import type { ExperienceListing } from '@/types/listing';
 
@@ -80,10 +80,7 @@ function ProjectCard({ l }: { l: ExperienceListing }) {
       <Image source={{ uri: l.cover }} style={{ width: '100%', aspectRatio: 1 }} contentFit="cover" />
       <View className="p-2.5">
         <Text className="text-[15px] font-semibold text-ink">{formatAed(l.priceAed)}</Text>
-        <View className="mt-1.5 flex-row items-center gap-1 self-start rounded-full bg-accent/10 px-1.5 py-0.5">
-          <Coins size={11} color={colors.accent} /><Text className="text-[11px] font-semibold text-accent">{formatCredits(l.credit.credits)}</Text>
-        </View>
-        <View className="mt-1 flex-row items-center gap-1"><MapPin size={11} color={colors.graphite} /><Text className="text-xs text-graphite" numberOfLines={1}>{l.community}</Text></View>
+        <View className="mt-1.5 flex-row items-center gap-1"><MapPin size={11} color={colors.graphite} /><Text className="text-xs text-graphite" numberOfLines={1}>{l.community}</Text></View>
       </View>
     </Pressable>
   );

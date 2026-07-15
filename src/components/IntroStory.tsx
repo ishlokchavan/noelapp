@@ -5,7 +5,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
-  ArrowRight, BadgePercent, Coins, ShieldCheck, Building2, Home, Tag, Handshake,
+  ArrowRight, Sparkles, Heart, ShieldCheck, Building2, Home, Video, Handshake,
 } from 'lucide-react-native';
 import { colors } from '@/theme/tokens';
 
@@ -14,16 +14,16 @@ const CDN = 'https://d8j0ntlcm91z4.cloudfront.net/user_373qi3JTSvYmXjqMPJT9idOjF
 const { width } = Dimensions.get('window');
 
 const DO_CARDS = [
-  { img: `${CDN}/hf_20260616_222225_d0f4e2b8-36a6-46aa-9625-324f1714414c.png`, Icon: Home, label: 'Buy', badge: '0% commission', line: 'Earn credits worth real money on every home.' },
-  { img: `${CDN}/hf_20260616_222230_e9003974-fd28-47cb-9667-44b1485ce165.png`, Icon: Tag, label: 'Sell', badge: 'List free', line: 'Sell direct to buyers, without paying commission.' },
-  { img: `${CDN}/hf_20260616_222236_b69f84e1-cbcb-452d-841d-63c07a0ada81.png`, Icon: Handshake, label: 'Close', badge: 'Keep 100%', line: 'List or close a deal and keep the full commission.' },
+  { img: `${CDN}/hf_20260616_222225_d0f4e2b8-36a6-46aa-9625-324f1714414c.png`, Icon: Sparkles, label: 'Discover', badge: 'Swipe', line: 'A full-screen feed that learns your taste.' },
+  { img: `${CDN}/hf_20260616_222230_e9003974-fd28-47cb-9667-44b1485ce165.png`, Icon: Heart, label: 'Save', badge: 'Shortlist', line: 'Heart the homes you love — all in one place.' },
+  { img: `${CDN}/hf_20260616_222236_b69f84e1-cbcb-452d-841d-63c07a0ada81.png`, Icon: Handshake, label: 'Enquire', badge: 'In a tap', line: 'Message, call or book a viewing instantly.' },
 ];
 
 const USPS = [
-  { Icon: BadgePercent, title: 'Zero commission', line: 'Buy, sell or close — you never pay a cut.' },
-  { Icon: Coins, title: 'Cashback credits', line: 'Earn Noel credits worth real money on every deal.' },
+  { Icon: Home, title: 'A feed made for you', line: 'The more you swipe, the smarter it gets.' },
   { Icon: ShieldCheck, title: 'Verified listings', line: 'Real, RERA-checked homes. No fake leads.' },
-  { Icon: Building2, title: 'Off-plan launches', line: 'Early access and special pricing on new launches.' },
+  { Icon: Building2, title: 'Off-plan launches', line: 'Early access to the newest projects.' },
+  { Icon: Video, title: 'Photo & video tours', line: 'See every home in full, right in the feed.' },
 ];
 
 const STEPS = 3;
@@ -81,14 +81,14 @@ export function IntroStory({ onDone }: { onDone?: () => void }) {
                 <>
                   <Text className="text-[17px] font-medium text-ink/40">Noel</Text>
                   <Text className="mt-8 text-[38px] font-normal leading-tight text-ink">
-                    Never pay commission to <Text className="font-bold">buy</Text>, <Text className="font-bold">sell</Text>, or <Text className="font-bold">close</Text> ever again.
+                    <Text className="font-bold">Swipe</Text>. <Text className="font-bold">Save</Text>. <Text className="font-bold">Move in</Text>.
                   </Text>
-                  <Text className="mt-5 text-[14px] text-ink/50">Investing in off-plan? Get special pricing & credits.</Text>
+                  <Text className="mt-5 text-[14px] text-ink/50">The addictive way to find your next home.</Text>
                 </>
               ) : item === 'ways' ? (
                 <>
-                  <Text className="text-[28px] font-semibold leading-tight text-ink">One app. Three ways to win.</Text>
-                  <Text className="mt-2 text-[15px] text-ink/50">Whichever side you're on, the cut stays yours.</Text>
+                  <Text className="text-[28px] font-semibold leading-tight text-ink">One feed. Made for you.</Text>
+                  <Text className="mt-2 text-[15px] text-ink/50">The more you explore, the smarter it gets.</Text>
                   <View className="mt-6 gap-3.5">
                     {DO_CARDS.map(({ img, Icon, label, badge, line }) => (
                       <View key={label} style={{ height: 118 }} className="overflow-hidden rounded-[22px]">
@@ -111,7 +111,7 @@ export function IntroStory({ onDone }: { onDone?: () => void }) {
               ) : (
                 <>
                   <Text className="text-[28px] font-semibold leading-tight text-ink">Why Noel?</Text>
-                  <Text className="mt-2 text-[15px] text-ink/50">Built to put money back in your pocket.</Text>
+                  <Text className="mt-2 text-[15px] text-ink/50">Built to make finding home effortless.</Text>
                   <View className="mt-6 gap-3">
                     {USPS.map(({ Icon, title, line }) => (
                       <View key={title} className="flex-row items-center gap-4 rounded-2xl border border-ink/5 bg-paper p-4">

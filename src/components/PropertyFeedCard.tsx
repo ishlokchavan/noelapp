@@ -2,13 +2,13 @@ import { memo, useState } from 'react';
 import { View, Text, Pressable, Share, Dimensions } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import {
-  Heart, Share2, X, Info, MapPin, BedDouble, Bath, Maximize, BadgeCheck, Coins,
+  Heart, Share2, X, Info, MapPin, BedDouble, Bath, Maximize, BadgeCheck,
 } from 'lucide-react-native';
 import * as Haptics from 'expo-haptics';
 import { router } from 'expo-router';
 import { SwipeGallery } from './SwipeGallery';
 import { LikeBurst } from './LikeBurst';
-import { formatAed, formatCredits } from '@/data/experience-data';
+import { formatAed } from '@/data/experience-data';
 import { listingUrl } from '@/lib/config';
 import { useSaved } from '@/store/saved';
 import { useSignals } from '@/store/signals';
@@ -120,10 +120,6 @@ function PropertyFeedCardImpl({
         <Pressable onPress={openDetails}>
           <View className="flex-row items-center gap-2.5">
             <Text className="text-3xl font-bold text-white">{formatAed(listing.priceAed)}</Text>
-            <View className="flex-row items-center gap-1 rounded-full bg-accent/90 px-2.5 py-1">
-              <Coins size={13} color="#fff" />
-              <Text className="text-xs font-semibold text-white">{formatCredits(listing.credit.credits)} credits</Text>
-            </View>
           </View>
           <Text className="mt-1.5 text-[15px] font-medium text-white" numberOfLines={1}>{listing.title}</Text>
           <View className="mt-0.5 flex-row items-center gap-1">

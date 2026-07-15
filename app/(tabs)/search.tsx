@@ -3,13 +3,13 @@ import { View, Text, TextInput, FlatList, Pressable, ScrollView, RefreshControl 
 import { Image } from 'expo-image';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
-import { Search as SearchIcon, X, Sparkles, Heart, Coins } from 'lucide-react-native';
+import { Search as SearchIcon, X, Sparkles, Heart } from 'lucide-react-native';
 import { useExperience } from '@/store/experience';
 import { useSaved } from '@/store/saved';
 import { usePullRefresh } from '@/lib/use-refresh';
 import { Glass, GlassBg } from '@/components/Glass';
 import { parseSearch, type ParsedFilters } from '@/lib/search-parse';
-import { formatAed, formatCredits } from '@/data/experience-data';
+import { formatAed } from '@/data/experience-data';
 import { colors } from '@/theme/tokens';
 import type { ExperienceListing } from '@/types/listing';
 
@@ -172,10 +172,7 @@ function GridCard({ listing, saved, onToggle }: { listing: ExperienceListing; sa
         </View>
         <View className="p-2.5">
           <Text className="text-[15px] font-semibold text-ink">{formatAed(listing.priceAed)}</Text>
-          <View className="mt-1.5 flex-row items-center gap-1 self-start rounded-full bg-accent/10 px-1.5 py-0.5">
-            <Coins size={11} color={colors.accent} /><Text className="text-[11px] font-semibold text-accent">{formatCredits(listing.credit.credits)}</Text>
-          </View>
-          <Text className="mt-1 text-xs text-graphite" numberOfLines={1}>{listing.community}, {listing.city}</Text>
+          <Text className="mt-1.5 text-xs text-graphite" numberOfLines={1}>{listing.community}, {listing.city}</Text>
         </View>
       </Pressable>
     </View>

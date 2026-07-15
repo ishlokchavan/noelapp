@@ -109,7 +109,7 @@ export default function SellScreen() {
         <View className="h-20 w-20 items-center justify-center rounded-full bg-journey-listing/30"><CheckCircle2 size={40} color={colors.accent} /></View>
         <Text className="mt-5 text-center text-2xl font-bold text-ink">Listing submitted</Text>
         <Text className="mt-2 text-center text-base text-graphite">
-          Our team will verify your details and documents, then publish your home — commission-free. We’ll be in touch on {contactPhone || 'your contact'}.
+          Our team will verify your details and documents, then publish your home. We’ll be in touch on {contactPhone || 'your contact'}.
         </Text>
         <Pressable onPress={() => router.back()} className="mt-8 w-full rounded-apple bg-ink py-4"><Text className="text-center font-semibold text-white">Done</Text></Pressable>
       </View>
@@ -125,7 +125,7 @@ export default function SellScreen() {
         </View>
         <View className="flex-1 items-center justify-center gap-4 px-8">
           <View className="h-16 w-16 items-center justify-center rounded-full bg-journey-listing/30"><Home size={30} color={colors.ink} /></View>
-          <Text className="text-center text-2xl font-bold text-ink">List your home, commission-free</Text>
+          <Text className="text-center text-2xl font-bold text-ink">List your home in minutes</Text>
           <Text className="text-center text-base text-graphite">
             Add your photos and ownership documents securely — it all happens through Noel. Our team verifies and publishes your home.
           </Text>

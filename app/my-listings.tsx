@@ -53,7 +53,7 @@ export default function MyListingsScreen() {
         ) : signedIn === false ? (
           <Empty title="Sign in to see your listings" cta="Go to sign in" onPress={() => { router.back(); router.push('/(tabs)/profile'); }} />
         ) : items.length === 0 ? (
-          <Empty title="You haven’t listed a property yet" sub="List your home commission-free — it only takes a minute." cta="List a property" onPress={() => router.push('/sell')} />
+          <Empty title="You haven’t listed a property yet" sub="List your home — it only takes a minute." cta="List a property" onPress={() => router.push('/sell')} />
         ) : (
           <View className="gap-3 px-4 pt-4">
             {items.map((l) => {

@@ -45,13 +45,13 @@ the web app ships), so the app reads the DB out of the box with no setup.
 - **Search** — instant substring search + chips, upgraded by on-device
   natural-language parsing ("2-bed near the marina under 2M with a pool")
 - **Map** — native map with live price-pin markers, filter chips, bottom card carousel
-- **Profile** — Supabase email + native Google OAuth, credits balance, saved/explored
+- **Profile** — Supabase email + native Google OAuth, saved/explored
   stats, reset activity, list-your-property
-- **Property detail** — photo/video gallery, credits panel, off-plan payment plan,
+- **Property detail** — photo/video gallery, off-plan payment plan,
   amenities, map link, agent card, "more like this", and the high-intent action bar
   (WhatsApp / Call / Book a viewing) — all tracked, exactly like the web
-- **Saved** — shortlist with total credits, remove, empty state (on-device, same as web)
-- **Sell** — commission-free listing-create form → `/api/listing`
+- **Saved** — shortlist of homes you love, remove, empty state (on-device, same as web)
+- **Sell** — listing-create form → `/api/listing`
 - Design tokens, types, data layer, recommender, explain, tracking — all ported from web
 
 ## Roadmap (next passes)

@@ -5,10 +5,10 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useLocalSearchParams, router } from 'expo-router';
 import * as Haptics from 'expo-haptics';
-import { X, Heart, CalendarClock, Wallet, ArrowUpRight, Coins } from 'lucide-react-native';
+import { X, Heart, CalendarClock, Wallet, ArrowUpRight } from 'lucide-react-native';
 import { useExperience } from '@/store/experience';
 import { useSaved } from '@/store/saved';
-import { formatAed, formatCredits } from '@/data/experience-data';
+import { formatAed } from '@/data/experience-data';
 import { colors } from '@/theme/tokens';
 
 const STORY_MS = 6000;
@@ -104,10 +104,6 @@ export default function LaunchesScreen() {
         <View className="self-start rounded-full bg-black/45 px-3 py-1"><Text className="text-xs font-medium text-white">Off-plan launch</Text></View>
         <Text className="mt-3 text-[26px] font-semibold leading-tight text-white">{launch.title}</Text>
         <Text className="mt-1.5 text-lg font-medium text-white/90">from {formatAed(launch.priceAed)}</Text>
-
-        <View className="mt-3 flex-row items-center gap-2 self-start rounded-full bg-white/95 px-3.5 py-2">
-          <Coins size={16} color={colors.accent} /><Text className="text-sm font-semibold text-accent">Earn {formatCredits(launch.credit.credits)} credits</Text>
-        </View>
 
         <View className="mt-4 flex-row gap-2.5">
           {launch.paymentPlan ? <View className="flex-row items-center gap-1.5 rounded-full bg-white/15 px-3 py-2"><Wallet size={15} color={colors.journey.offplan} /><Text className="text-[13px] text-white">{launch.paymentPlan} plan</Text></View> : null}

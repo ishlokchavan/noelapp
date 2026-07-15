@@ -5,14 +5,12 @@ import * as WebBrowser from 'expo-web-browser';
 import * as Linking from 'expo-linking';
 import * as AppleAuthentication from 'expo-apple-authentication';
 import { router } from 'expo-router';
-import { Heart, Eye, Coins, Plus, ChevronRight, RotateCcw, LogIn, LogOut, Trash2, Building2 } from 'lucide-react-native';
+import { Heart, Eye, Plus, ChevronRight, RotateCcw, LogIn, LogOut, Trash2, Building2 } from 'lucide-react-native';
 import { supabase } from '@/lib/supabase';
 import { useSaved } from '@/store/saved';
 import { useSignals } from '@/store/signals';
-import { useExperience } from '@/store/experience';
 import { usePullRefresh } from '@/lib/use-refresh';
 import { GlassBg } from '@/components/Glass';
-import { formatCredits } from '@/data/experience-data';
 import { colors } from '@/theme/tokens';
 import type { Session } from '@supabase/supabase-js';
 
@@ -20,7 +18,6 @@ WebBrowser.maybeCompleteAuthSession();
 
 export default function ProfileScreen() {
   const insets = useSafeAreaInsets();
-  const { listings } = useExperience();
   const { decisions, savedRefs, reset } = useSaved();
   const { reset: resetSignals } = useSignals();
   const { refreshing, onRefresh } = usePullRefresh();
@@ -58,9 +55,6 @@ export default function ProfileScreen() {
   }
 
   const seen = Object.keys(decisions).length;
-  const pendingCredits = listings
-    .filter((l) => decisions[l.reference] === 'saved')
-    .reduce((sum, l) => sum + l.credit.credits, 0);
   const name = (session?.user.user_metadata?.full_name as string | undefined) || session?.user.email?.split('@')[0] || 'Guest';
 
   async function submitEmail() {
@@ -157,7 +151,7 @@ export default function ProfileScreen() {
         <View className="h-16 w-16 items-center justify-center rounded-full bg-ink"><Text className="text-[22px] font-semibold text-white">{name.charAt(0).toUpperCase()}</Text></View>
         <View className="flex-1">
           <Text className="text-[22px] font-semibold text-ink" numberOfLines={1}>{name}</Text>
-          <Text className="text-sm text-graphite" numberOfLines={1}>{session ? session.user.email : 'Sign in to sync your shortlist & credits'}</Text>
+          <Text className="text-sm text-graphite" numberOfLines={1}>{session ? session.user.email : 'Sign in to sync your shortlist'}</Text>
         </View>
       </View>
 
@@ -190,7 +184,7 @@ export default function ProfileScreen() {
       {/* List your property */}
       <Pressable onPress={() => router.push('/sell')} className="mb-4 flex-row items-center gap-3 rounded-apple bg-ink p-4">
         <View className="h-11 w-11 items-center justify-center rounded-full bg-white/15"><Plus size={24} color="#fff" /></View>
-        <View className="flex-1"><Text className="text-[15px] font-semibold text-white">List your property</Text><Text className="text-[13px] text-white/65">Sell direct · commission-free</Text></View>
+        <View className="flex-1"><Text className="text-[15px] font-semibold text-white">List your property</Text><Text className="text-[13px] text-white/65">Sell direct · list in minutes</Text></View>
         <ChevronRight size={20} color="rgba(255,255,255,0.6)" />
       </Pressable>
 
@@ -202,13 +196,6 @@ export default function ProfileScreen() {
           <ChevronRight size={20} color={colors.graphiteLight} />
         </Pressable>
       ) : null}
-
-      {/* Credits balance */}
-      <View className="mb-4 rounded-apple border border-white/60 bg-white/70 p-5">
-        <View className="flex-row items-center gap-2"><Coins size={16} color={colors.accent} /><Text className="text-[13px] text-graphite">Noel credits balance</Text></View>
-        <Text className="mt-1.5 text-[34px] font-semibold text-ink">0</Text>
-        {pendingCredits > 0 ? <Text className="mt-1 text-[13px] text-graphite">{formatCredits(pendingCredits)} credits waiting across your shortlist</Text> : null}
-      </View>
 
       {/* Stats */}
       <View className="mb-4 flex-row gap-3">
