@@ -3,6 +3,17 @@
 Paste these into App Store Connect → Distribution → iOS App → 1.0.0.
 Character limits noted in parentheses.
 
+## New app identity (create a fresh App Store Connect record)
+- **Bundle ID:** `com.noelapp.app` (register under Certificates, Identifiers &
+  Profiles first, then create a new app that uses it).
+- This is a **brand-new app**, separate from the legacy iClose app
+  (`ae.iclose.app`, ASC id `6783816832`), which stays live. Do **not** reuse the
+  old app record or its ascAppId.
+- Backend is unchanged: same Supabase project (`iclose-academy-db`) and API.
+- After creating the app, put its new ascAppId in `eas.json`
+  (`submit.production.ios.ascAppId`) — or let `eas submit` create/select it by
+  bundle id.
+
 ---
 
 ## App name (≤30)
@@ -60,9 +71,9 @@ First release of noelapp:
 • List your property, commission-free
 
 ## URLs
-- Support URL:        https://ishlokchavan.github.io/iclose-v2/support.html
-- Marketing URL:      https://iclose.ae
-- Privacy Policy URL: https://ishlokchavan.github.io/iclose-v2/privacy-policy.html
+- Support URL:        https://ishlokchavan.github.io/noelapp/support.html
+- Marketing URL:      https://noelapp.com
+- Privacy Policy URL: https://ishlokchavan.github.io/noelapp/privacy-policy.html
 
 > These GitHub Pages URLs work once you enable Pages (see README/Hosting below).
 > You can also host the two files in docs/ anywhere and use those URLs instead.
@@ -102,6 +113,6 @@ No demo account required (content is public). Provide your contact email/phone.
 2. GitHub repo → **Settings → Pages** → Source: **Deploy from a branch** →
    Branch: **main**, Folder: **/docs** → Save.
 3. After a minute the pages are live at:
-   - https://ishlokchavan.github.io/iclose-v2/privacy-policy.html
-   - https://ishlokchavan.github.io/iclose-v2/support.html
+   - https://ishlokchavan.github.io/noelapp/privacy-policy.html
+   - https://ishlokchavan.github.io/noelapp/support.html
    (If your repo name differs, the path matches the repo name.)

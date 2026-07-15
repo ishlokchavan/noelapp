@@ -2,15 +2,17 @@ import type { ExpoConfig } from 'expo/config';
 
 /**
  * noelapp — native app config.
- * Bundle id ae.iclose.app (reverse-DNS of iclose.ae). Custom scheme `iclose`
- * powers OAuth deep links (iclose://auth-callback).
+ * Bundle id com.noelapp.app (reverse-DNS of noelapp.com). Custom scheme `noelapp`
+ * powers OAuth deep links (noelapp://auth-callback).
+ * Brand-new App Store app — distinct from the legacy iClose app (ae.iclose.app),
+ * which stays live. Backend (iclose-academy-db Supabase + iclose.ae API) is shared.
  */
 const config: ExpoConfig = {
   name: 'noelapp',
-  slug: 'iclose',
-  owner: 'shlokchavan.personal',
-  scheme: 'iclose',
-  version: '1.1.0',
+  slug: 'noelapp',
+  // owner cleared for the new app — `eas init` associates it with your Expo account.
+  scheme: 'noelapp',
+  version: '1.0.0',
   orientation: 'portrait',
   icon: './assets/icon.png',
   userInterfaceStyle: 'light',
@@ -23,7 +25,7 @@ const config: ExpoConfig = {
   assetBundlePatterns: ['**/*'],
   ios: {
     supportsTablet: false,
-    bundleIdentifier: 'ae.iclose.app',
+    bundleIdentifier: 'com.noelapp.app',
     usesAppleSignIn: true,
     // Declared explicitly so EAS's capability sync registers Sign In with Apple
     // on the App ID + provisioning profile (usesAppleSignIn alone wasn't detected).
@@ -65,7 +67,9 @@ const config: ExpoConfig = {
     supabaseAnonKey:
       process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY ??
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5ua2ljbWZzZGJmcHVjZmNudXRuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg2ODkyMDcsImV4cCI6MjA5NDI2NTIwN30.liASHVfCZQsB4OFwhY6uBYuv99IWXaMBbGGgbuFiKTs',
-    eas: { projectId: '329eea7c-7a6a-4abf-bf2c-a5ed6aaf817a' },
+    // eas.projectId cleared — run `eas init` to create a fresh EAS project for
+    // the new app and paste the generated id back here (dynamic app.config.ts
+    // isn't auto-written by eas init).
     // Feature flags. `shares` gates the tokenized real-estate module (6th tab +
     // /shares routes). Off => the module is fully hidden; the build under App
     // Store review ships with it off and is never affected.
