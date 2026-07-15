@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { View, Text, FlatList, Dimensions, Pressable, RefreshControl, type ViewToken } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import { useIsFocused } from '@react-navigation/native';
 import * as Haptics from 'expo-haptics';
@@ -14,6 +15,8 @@ import type { ExperienceListing } from '@/types/listing';
 
 const { height } = Dimensions.get('window');
 const QUICK_SKIP_MS = 2500;
+/** Soft shadow so white overlay text stays legible over any photo. */
+const TEXT_SHADOW = { textShadowColor: 'rgba(0,0,0,0.4)', textShadowOffset: { width: 0, height: 1 }, textShadowRadius: 4 } as const;
 const END = { __end: true } as const;
 type Row = ExperienceListing | typeof END;
 
@@ -114,20 +117,27 @@ export default function FeedScreen() {
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#ffffff" />}
       />
 
-      {/* Wordmark */}
-      <View pointerEvents="none" style={{ position: 'absolute', top: insets.top + 8, left: 20 }}>
-        <Text className="text-xl font-bold text-white">Noel</Text>
+      {/* Top scrim — keeps the brand + control legible over any photo */}
+      <LinearGradient pointerEvents="none" colors={['rgba(0,0,0,0.5)', 'transparent']} style={{ position: 'absolute', top: 0, left: 0, right: 0, height: insets.top + 76 }} />
+
+      {/* Brand — secondary; recedes behind the feed control */}
+      <View pointerEvents="none" style={{ position: 'absolute', top: insets.top + 13, left: 20 }}>
+        <Text style={TEXT_SHADOW} className="text-[15px] font-semibold tracking-tight text-white/80">Noel</Text>
       </View>
 
-      {/* Center tabs — Ready / Off-plan (Instagram-style) */}
-      <View pointerEvents="box-none" style={{ position: 'absolute', top: insets.top + 8, left: 0, right: 0 }} className="flex-row items-center justify-center gap-6">
-        {(['ready', 'off_plan'] as const).map((t) => (
-          <Pressable key={t} onPress={() => switchTab(t)} hitSlop={10}>
-            <Text className={`text-[17px] ${tab === t ? 'font-bold text-white' : 'font-semibold text-white/50'}`}>
-              {t === 'ready' ? 'Ready' : 'Off-plan'}
-            </Text>
-          </Pressable>
-        ))}
+      {/* Center control — Ready / Off-plan (primary; active gets an underline) */}
+      <View pointerEvents="box-none" style={{ position: 'absolute', top: insets.top + 6, left: 0, right: 0 }} className="flex-row items-start justify-center gap-7">
+        {(['ready', 'off_plan'] as const).map((t) => {
+          const active = tab === t;
+          return (
+            <Pressable key={t} onPress={() => switchTab(t)} hitSlop={12} className="items-center">
+              <Text style={TEXT_SHADOW} className={`text-[16px] ${active ? 'font-bold text-white' : 'font-semibold text-white/55'}`}>
+                {t === 'ready' ? 'Ready' : 'Off-plan'}
+              </Text>
+              <View style={{ height: 2.5, width: 22, borderRadius: 2, marginTop: 5, backgroundColor: active ? '#ffffff' : 'transparent' }} />
+            </Pressable>
+          );
+        })}
       </View>
 
       {/* Swipe-up hint on the first card */}
