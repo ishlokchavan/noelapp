@@ -92,6 +92,20 @@ const extFor = (mime?: string | null) =>
           : mime?.includes('mp4') || mime?.includes('video') ? 'mp4'
             : 'jpg';
 
+/** Retry an upload a few times — mobile connections drop mid-transfer, especially
+ *  on larger videos. Upserts, so a partial first attempt doesn't block the retry. */
+async function withRetry<T>(fn: () => Promise<T>, tries = 3): Promise<T> {
+  let lastErr: unknown;
+  for (let attempt = 0; attempt < tries; attempt++) {
+    try { return await fn(); }
+    catch (e) {
+      lastErr = e;
+      if (attempt < tries - 1) await new Promise((r) => setTimeout(r, 800 * (attempt + 1)));
+    }
+  }
+  throw lastErr instanceof Error ? lastErr : new Error(String(lastErr));
+}
+
 /**
  * Upload everything then insert the submission. Reports coarse progress so the
  * UI can show "Uploading 3 of 8…". Returns the new submission id.
@@ -119,9 +133,9 @@ export async function submitListing(
     const isVideo = (p.mimeType ?? '').includes('video');
     // Images: the proven base64 → storage upload. Videos: binary stream so large
     // files don't blow up memory (base64 of a video OOMs).
-    photoPaths.push(isVideo
-      ? await uploadBinary(path, p.uri, p.mimeType ?? 'video/mp4')
-      : await uploadOne(path, p, p.mimeType ?? 'image/jpeg'));
+    photoPaths.push(await withRetry(() => isVideo
+      ? uploadBinary(path, p.uri, p.mimeType ?? 'video/mp4')
+      : uploadOne(path, p, p.mimeType ?? 'image/jpeg')));
     tick();
   }
 
@@ -129,7 +143,7 @@ export async function submitListing(
   for (let i = 0; i < docs.length; i++) {
     const d = docs[i];
     const safe = (d.name ?? `document-${i}`).replace(/[^a-zA-Z0-9._-]/g, '_');
-    documentPaths.push(await uploadOne(`${base}/documents/${i}_${safe}`, d, d.mimeType ?? 'application/octet-stream'));
+    documentPaths.push(await withRetry(() => uploadOne(`${base}/documents/${i}_${safe}`, d, d.mimeType ?? 'application/octet-stream')));
     tick();
   }
 
