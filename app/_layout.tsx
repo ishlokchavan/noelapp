@@ -11,8 +11,7 @@ import { SignalStoreProvider } from '@/store/signals';
 import { SharesProvider } from '@/store/shares';
 import { GlossaryProvider } from '@/components/Term';
 import { FEATURES } from '@/lib/features';
-import { IntroStory } from '@/components/IntroStory';
-import { TastePicker } from '@/components/TastePicker';
+import { Onboarding } from '@/components/Onboarding';
 
 /** Mount the Shares store + glossary only when the module is enabled. */
 function WithShares({ children }: { children: React.ReactNode }) {
@@ -55,9 +54,8 @@ export default function RootLayout() {
                   <Stack.Screen name="shares/kyc" options={{ presentation: 'modal' }} />
                   <Stack.Screen name="shares/wallet" options={{ presentation: 'modal' }} />
                 </Stack>
-                {/* First-run onboarding — cover the whole app incl. the tab bar */}
-                <TastePicker />
-                <IntroStory />
+                {/* First-run onboarding — covers the whole app incl. the tab bar */}
+                <Onboarding />
               </WithShares>
             </SignalStoreProvider>
           </SavedProvider>
