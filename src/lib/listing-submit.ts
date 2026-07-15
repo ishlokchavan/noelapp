@@ -80,7 +80,7 @@ async function uploadBinary(path: string, uri: string, contentType: string): Pro
       'x-upsert': 'true',
     },
   });
-  if (res.status >= 300) throw new Error(`Upload failed (${res.status})`);
+  if (res.status >= 300) throw new Error(`Upload failed (${res.status}): ${(res.body ?? '').slice(0, 300)}`);
   return path;
 }
 
@@ -115,8 +115,13 @@ export async function submitListing(
   const photoPaths: string[] = [];
   for (let i = 0; i < photos.length; i++) {
     const p = photos[i];
-    // Binary stream — handles large photos and videos without a base64 blow-up.
-    photoPaths.push(await uploadBinary(`${base}/photos/${i}.${extFor(p.mimeType)}`, p.uri, p.mimeType ?? 'image/jpeg'));
+    const path = `${base}/photos/${i}.${extFor(p.mimeType)}`;
+    const isVideo = (p.mimeType ?? '').includes('video');
+    // Images: the proven base64 → storage upload. Videos: binary stream so large
+    // files don't blow up memory (base64 of a video OOMs).
+    photoPaths.push(isVideo
+      ? await uploadBinary(path, p.uri, p.mimeType ?? 'video/mp4')
+      : await uploadOne(path, p, p.mimeType ?? 'image/jpeg'));
     tick();
   }
 
