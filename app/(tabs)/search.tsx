@@ -7,10 +7,12 @@ import {
   Search as SearchIcon, X, Sparkles, Heart, SlidersHorizontal,
   BedDouble, Bath, Maximize, MapPin, ShieldCheck,
 } from 'lucide-react-native';
+import Animated, { FadeInDown } from 'react-native-reanimated';
 import { useExperience } from '@/store/experience';
 import { useSaved } from '@/store/saved';
 import { usePullRefresh } from '@/lib/use-refresh';
 import { Glass, GlassBg } from '@/components/Glass';
+import { Pop } from '@/components/Pop';
 import { parseSearch, type ParsedFilters } from '@/lib/search-parse';
 import { formatAed } from '@/data/experience-data';
 import { bedLabel } from '@/lib/format';
@@ -206,6 +208,7 @@ export default function SearchScreen() {
 function RichCard({ listing, saved, onToggle }: { listing: ExperienceListing; saved: boolean; onToggle: () => void }) {
   const offPlan = listing.completion === 'off_plan';
   return (
+    <Animated.View entering={FadeInDown.duration(260)}>
     <Pressable onPress={() => router.push(`/property/${listing.reference}`)} className="overflow-hidden rounded-3xl border border-white/60 bg-white/75">
       <View className="relative">
         <Image source={{ uri: listing.cover }} style={{ width: '100%', aspectRatio: 1.6 }} contentFit="cover" transition={150} />
@@ -215,7 +218,7 @@ function RichCard({ listing, saved, onToggle }: { listing: ExperienceListing; sa
           {listing.isVerified ? <Tag icon>Verified</Tag> : null}
         </View>
         <Pressable onPress={onToggle} hitSlop={8} className="absolute right-3 top-3 h-9 w-9 items-center justify-center rounded-full bg-white/85">
-          <Heart size={17} color={saved ? '#f43f5e' : colors.ink} fill={saved ? '#f43f5e' : 'transparent'} />
+          <Pop trigger={saved}><Heart size={17} color={saved ? '#f43f5e' : colors.ink} fill={saved ? '#f43f5e' : 'transparent'} /></Pop>
         </Pressable>
       </View>
       <View className="p-3.5">
@@ -233,6 +236,7 @@ function RichCard({ listing, saved, onToggle }: { listing: ExperienceListing; sa
         </View>
       </View>
     </Pressable>
+    </Animated.View>
   );
 }
 

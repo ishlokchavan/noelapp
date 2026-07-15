@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { View, Text, Pressable, ScrollView, Alert, RefreshControl, Dimensions } from 'react-native';
 import { Image } from 'expo-image';
+import Animated, { FadeIn } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { LayoutGrid, Heart, Eye, Settings, Plus, Home } from 'lucide-react-native';
@@ -150,14 +151,16 @@ export default function ProfileScreen() {
           <EmptyGrid tab={tab} />
         ) : (
           <View className="flex-row flex-wrap">
-            {cells.map((c) => (
-              <Pressable key={c.key} onPress={c.onPress} style={{ width: CELL, height: CELL, padding: 1 }}>
-                {c.uri ? (
-                  <Image source={{ uri: c.uri }} style={{ flex: 1 }} contentFit="cover" />
-                ) : (
-                  <View className="flex-1 items-center justify-center bg-mist"><Home size={22} color={colors.graphiteLight} /></View>
-                )}
-              </Pressable>
+            {cells.map((c, i) => (
+              <Animated.View key={c.key} entering={FadeIn.delay(Math.min(i * 15, 240)).duration(220)}>
+                <Pressable onPress={c.onPress} style={{ width: CELL, height: CELL, padding: 1 }}>
+                  {c.uri ? (
+                    <Image source={{ uri: c.uri }} style={{ flex: 1 }} contentFit="cover" transition={150} />
+                  ) : (
+                    <View className="flex-1 items-center justify-center bg-mist"><Home size={22} color={colors.graphiteLight} /></View>
+                  )}
+                </Pressable>
+              </Animated.View>
             ))}
           </View>
         )}

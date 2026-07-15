@@ -25,6 +25,7 @@ import { slugifyDeveloper } from '@/lib/slug';
 import { bedLabel } from '@/lib/format';
 import { CONTACT_WHATSAPP, CONTACT_PHONE, listingUrl } from '@/lib/config';
 import { Glass, GlassBg } from '@/components/Glass';
+import { Pop } from '@/components/Pop';
 import { colors } from '@/theme/tokens';
 
 const { width } = Dimensions.get('window');
@@ -111,7 +112,7 @@ export default function PropertyScreen() {
         <Glass rounded={0} style={{ paddingTop: insets.top + 6, paddingBottom: 10, paddingHorizontal: 16, flexDirection: 'row', alignItems: 'center', gap: 12, borderBottomWidth: 0.5, borderBottomColor: 'rgba(0,0,0,0.08)' }}>
           <Pressable onPress={() => router.back()} hitSlop={8}><ChevronLeft size={24} color={colors.ink} /></Pressable>
           <Text numberOfLines={1} className="flex-1 text-[15px] font-semibold text-ink">{formatAed(listing.priceAed)} · {listing.title}</Text>
-          <Pressable onPress={toggleSave} hitSlop={8}><Heart size={22} color={colors.ink} fill={saved ? colors.ink : 'transparent'} /></Pressable>
+          <Pressable onPress={toggleSave} hitSlop={8}><Pop trigger={saved}><Heart size={22} color={colors.ink} fill={saved ? colors.ink : 'transparent'} /></Pop></Pressable>
         </Glass>
       </Animated.View>
 
@@ -138,7 +139,7 @@ export default function PropertyScreen() {
           <View style={{ top: insets.top + 8 }} className="absolute right-4 flex-row gap-2">
             <Pressable onPress={shareListing} className="h-11 w-11 items-center justify-center rounded-full bg-black/35"><Share2 size={20} color="#fff" /></Pressable>
             <Pressable onPress={toggleSave} className={`h-11 w-11 items-center justify-center rounded-full ${saved ? 'bg-ink' : 'bg-black/35'}`}>
-              <Heart size={20} color="#fff" fill={saved ? '#fff' : 'transparent'} />
+              <Pop trigger={saved}><Heart size={20} color="#fff" fill={saved ? '#fff' : 'transparent'} /></Pop>
             </Pressable>
           </View>
           {/* bottom overlay: badges + photo count */}
