@@ -17,29 +17,29 @@ Character limits noted in parentheses.
 ---
 
 ## App name (≤30)
-Noel
+Noel: Property Feed
 
-> Alternatives if you want keywords in the name:
-> `Noel: UAE Homes & Credits` (25) · `Noel — Dubai Property` (21)
+> Alternatives (all ≤30, global, no trademark clash):
+> `Noel - Home Discovery Feed` (26) · `Noel: Real Estate Feed` (22) · `Noel - Swipe Homes` (18)
 
 ## Subtitle (≤30)
-Find homes, earn credits
+Swipe, discover, earn credits
 
 ## Promotional text (≤170, editable any time without review)
-Discover UAE homes in a feed built for you. Save what you love, see the Noel credits you’d earn, and book a viewing in a tap. New launches added regularly.
+The addictive way to find your next home. Swipe a full-screen feed that learns your taste — save what you love and earn credits on every home.
 
 ## Keywords (≤100, comma-separated, no spaces)
 dubai,property,real estate,homes,apartment,villa,off-plan,uae,rent,buy,listings,cashback,credits,realty
 
 ## Description (≤4000)
-Noel is the effortless way to discover homes across the UAE — and the only one that pays you back.
+Noel is the addictive way to find your next home — a full-screen feed that learns your taste, and the only one that pays you back.
 
 Swipe through a full-screen, personalised feed of apartments, villas, townhouses and off-plan launches. The more you explore, the smarter your feed gets. Every home shows the Noel credits you’d earn — real value back on your move, commission-free.
 
 WHY NOEL
 • A discovery feed that learns your taste as you save and skip
 • See the Noel credits you earn on every home
-• Verified listings across Dubai and the wider UAE
+• Verified listings from trusted agents and developers
 • Off-plan launches with payment plans and handover dates
 • Photo and video tours, right in the feed
 
