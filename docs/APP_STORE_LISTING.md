@@ -10,9 +10,8 @@ Character limits noted in parentheses.
   (`ae.iclose.app`, ASC id `6783816832`), which stays live. Do **not** reuse the
   old app record or its ascAppId.
 - Backend is unchanged: same Supabase project (`iclose-academy-db`) and API.
-- After creating the app, put its new ascAppId in `eas.json`
-  (`submit.production.ios.ascAppId`) — or let `eas submit` create/select it by
-  bundle id.
+- App Store Connect record created: **ASC App ID `6791083696`** (already set in
+  `eas.json` → `submit.production.ios.ascAppId`).
 
 ---
 

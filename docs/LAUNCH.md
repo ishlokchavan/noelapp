@@ -8,6 +8,7 @@ Key facts
 - Display name: **Noel** · App Store name: **Noel: Property Feed**
 - Bundle id: **com.noelapp.app** · Scheme: **noelapp://**
 - EAS project: **@shlokchavan.personal/noelapp** (`681d6f23-d39d-4407-b850-d7fafe484335`)
+- App Store Connect app: **6791083696** (submits via ASC API key, stored on EAS)
 - Backend (shared, unchanged): Supabase **iclose-academy-db**, API **iclose.ae**
 - Marketing site: **noelapp.com** · Support/Privacy: GitHub Pages on this repo
 
@@ -30,16 +31,15 @@ Key facts
       bundle id; the old `ae.iclose.app`-only config rejects Noel's tokens)
 - [ ] Confirm the **Google** provider is enabled for the same project
 
-## 1. Create the App Store Connect app record
-- [ ] App Store Connect → **Apps → ➕ New App**
-  - Platform **iOS** · Name **Noel: Property Feed** · Language English
-  - Bundle ID **com.noelapp.app** (from dropdown) · SKU e.g. `noel-ios-001`
-- [ ] If the name is taken, use an alternative from `APP_STORE_LISTING.md`
+## 1. App Store Connect app record
+- [x] Created via `eas submit` → ASC App ID **6791083696** (`com.noelapp.app`)
+- [x] `ascAppId` wired into `eas.json` so future submits skip the Apple-login step
 
 ## 2. Upload the build → TestFlight
-- [ ] `eas submit --platform ios --latest`  (creates/links the record, uploads `.ipa`)
-- [ ] Wait for TestFlight processing (~5–15 min), add yourself as a tester
+- [x] `eas submit --platform ios --latest` → binary uploaded, Apple processing
+- [ ] Wait for the "processing complete" email (~5–10 min), add yourself as a tester
 - [ ] Install and verify: new **N.** icon, **Noel** splash, browse + **sign-in works**
+      (sign-in needs the Supabase fix above)
 
 ## 3. Store listing assets
 - [ ] Screenshots — iPhone only (`supportsTablet: false`): 6.9"/6.7" + 6.5" sizes
