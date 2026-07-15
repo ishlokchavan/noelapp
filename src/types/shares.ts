@@ -1,5 +1,5 @@
 /**
- * iClose Shares — tokenized real-estate (showcase) domain types. These mirror the
+ * noelapp Shares — tokenized real-estate (showcase) domain types. These mirror the
  * `shares_*` Supabase tables 1:1 (snake_case → camelCase happens in lib/shares.ts).
  */
 

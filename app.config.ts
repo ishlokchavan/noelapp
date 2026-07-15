@@ -1,12 +1,12 @@
 import type { ExpoConfig } from 'expo/config';
 
 /**
- * iClose — native app config.
+ * noelapp — native app config.
  * Bundle id ae.iclose.app (reverse-DNS of iclose.ae). Custom scheme `iclose`
  * powers OAuth deep links (iclose://auth-callback).
  */
 const config: ExpoConfig = {
-  name: 'iClose',
+  name: 'noelapp',
   slug: 'iclose',
   owner: 'shlokchavan.personal',
   scheme: 'iclose',
@@ -33,7 +33,7 @@ const config: ExpoConfig = {
     config: { usesNonExemptEncryption: false },
     infoPlist: {
       NSLocationWhenInUseUsageDescription:
-        'iClose uses your location to show nearby homes on the map.',
+        'noelapp uses your location to show nearby homes on the map.',
     },
   },
   android: {
@@ -52,13 +52,13 @@ const config: ExpoConfig = {
     'expo-router',
     'expo-secure-store',
     'expo-video',
-    ['expo-image-picker', { photosPermission: 'iClose needs access to your photos so you can add them to your property listing.' }],
+    ['expo-image-picker', { photosPermission: 'noelapp needs access to your photos so you can add them to your property listing.' }],
     ['expo-splash-screen', { backgroundColor: '#ffffff', image: './assets/splash.png', resizeMode: 'contain' }],
   ],
   experiments: { typedRoutes: true },
   extra: {
     apiBaseUrl: process.env.EXPO_PUBLIC_API_BASE_URL ?? 'https://iclose.ae',
-    // Live iClose database (iclose-academy-db). The anon key is a publishable,
+    // Live noelapp database (iclose-academy-db). The anon key is a publishable,
     // RLS-protected client key — safe to ship, same as the web app.
     supabaseUrl:
       process.env.EXPO_PUBLIC_SUPABASE_URL ?? 'https://nnkicmfsdbfpucfcnutn.supabase.co',

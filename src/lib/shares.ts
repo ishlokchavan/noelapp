@@ -6,7 +6,7 @@ import type {
 } from '@/types/shares';
 
 /**
- * Data access for iClose Shares — reads the live `shares_*` tables and invokes
+ * Data access for noelapp Shares — reads the live `shares_*` tables and invokes
  * the SECURITY DEFINER RPCs. Public reads fall back to seed data when Supabase
  * is unreachable; user/wallet reads + every mutation require an auth session.
  */

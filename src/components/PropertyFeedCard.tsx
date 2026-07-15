@@ -59,7 +59,7 @@ function PropertyFeedCardImpl({
   function onShare() {
     track('share', listing);
     Share.share({
-      message: `${listing.title} — ${formatAed(listing.priceAed)} on iClose\n${listingUrl(listing.reference)}`,
+      message: `${listing.title} — ${formatAed(listing.priceAed)} on noelapp\n${listingUrl(listing.reference)}`,
     }).catch(() => {});
   }
 

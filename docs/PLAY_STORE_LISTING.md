@@ -1,4 +1,4 @@
-# iClose — Google Play Console listing
+# noelapp — Google Play Console listing
 
 Paste these into Play Console → your app → Store presence → Main store listing.
 Character limits noted in parentheses.
@@ -6,19 +6,19 @@ Character limits noted in parentheses.
 ---
 
 ## App name (≤30)
-iClose
+noelapp
 
 ## Short description (≤80)
-Discover UAE homes in a personalised feed — and earn iClose credits as you go.
+Discover UAE homes in a personalised feed — and earn noelapp credits as you go.
 
 ## Full description (≤4000)
-iClose is the effortless way to discover homes across the UAE — and the only one that pays you back.
+noelapp is the effortless way to discover homes across the UAE — and the only one that pays you back.
 
-Swipe through a full-screen, personalised feed of apartments, villas, townhouses and off-plan launches. The more you explore, the smarter your feed gets. Every home shows the iClose credits you'd earn — real value back on your move, commission-free.
+Swipe through a full-screen, personalised feed of apartments, villas, townhouses and off-plan launches. The more you explore, the smarter your feed gets. Every home shows the noelapp credits you'd earn — real value back on your move, commission-free.
 
-WHY ICLOSE
+WHY NOELAPP
 • A discovery feed that learns your taste as you save and skip
-• See the iClose credits you earn on every home
+• See the noelapp credits you earn on every home
 • Verified listings across Dubai and the wider UAE
 • Off-plan launches with payment plans and handover dates
 • Photo and video tours, right in the feed
@@ -39,12 +39,12 @@ LIST YOUR HOME, COMMISSION-FREE
 
 You can browse everything without an account. Sign in with Google or email to sync your shortlist.
 
-iClose — find your next home, and keep more of what's yours.
+noelapp — find your next home, and keep more of what's yours.
 
 ## What's new (release notes)
-First release of iClose on Android:
+First release of noelapp on Android:
 • Personalised, full-screen home discovery feed
-• iClose credits shown on every listing
+• noelapp credits shown on every listing
 • Natural-language search, map, and trending launches
 • Photo & video tours
 • Sign in with Google or email

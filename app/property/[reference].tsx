@@ -55,7 +55,7 @@ export default function PropertyScreen() {
   function openWhatsApp() {
     track('whatsapp', listing!);
     const text = encodeURIComponent(
-      `Hi, I'm interested in ${listing!.title} (${listing!.reference}) on iClose.\n${listingUrl(listing!.reference)}`,
+      `Hi, I'm interested in ${listing!.title} (${listing!.reference}) on noelapp.\n${listingUrl(listing!.reference)}`,
     );
     Linking.openURL(`https://wa.me/${CONTACT_WHATSAPP.replace(/[^0-9]/g, '')}?text=${text}`).catch(() => {});
   }
@@ -91,7 +91,7 @@ export default function PropertyScreen() {
           </Pressable>
           <View style={{ top: insets.top + 8 }} className="absolute right-4 flex-row gap-2">
             <Pressable
-              onPress={() => { track('share', listing); Share.share({ message: `${listing.title} — ${formatAed(listing.priceAed)} on iClose\n${listingUrl(listing.reference)}` }).catch(() => {}); }}
+              onPress={() => { track('share', listing); Share.share({ message: `${listing.title} — ${formatAed(listing.priceAed)} on noelapp\n${listingUrl(listing.reference)}` }).catch(() => {}); }}
               className="h-11 w-11 items-center justify-center rounded-full bg-black/35">
               <Share2 size={20} color="#fff" />
             </Pressable>
@@ -125,11 +125,11 @@ export default function PropertyScreen() {
               <View className="h-10 w-10 items-center justify-center rounded-full bg-accent/15"><Coins size={20} color={colors.accent} /></View>
               <View className="flex-1">
                 <Text className="text-xs text-graphite">Buy this home and get</Text>
-                <Text className="text-xl font-bold text-accent">{formatCredits(listing.credit.credits)} iClose credits</Text>
+                <Text className="text-xl font-bold text-accent">{formatCredits(listing.credit.credits)} noelapp credits</Text>
               </View>
             </View>
             <Text className="border-t border-accent/15 px-4 py-2.5 text-xs text-graphite">
-              Credits are yours to keep and spend on iClose — that's the commission you'd normally lose.
+              Credits are yours to keep and spend on noelapp — that's the commission you'd normally lose.
             </Text>
           </View>
 
@@ -197,7 +197,7 @@ export default function PropertyScreen() {
               </Text>
             </View>
             <View className="flex-1">
-              <Text className="text-[15px] font-medium text-ink" numberOfLines={1}>{listing.agentName ?? listing.developerName ?? 'iClose listing'}</Text>
+              <Text className="text-[15px] font-medium text-ink" numberOfLines={1}>{listing.agentName ?? listing.developerName ?? 'noelapp listing'}</Text>
               <Text className="text-[13px] text-graphite" numberOfLines={1}>
                 {listing.agencyName ?? (listing.source === 'owner' ? 'Listed by owner · commission-free' : 'Developer direct')}
               </Text>

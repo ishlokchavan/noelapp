@@ -1,6 +1,6 @@
-# iClose — Native App (Expo / React Native)
+# noelapp — Native App (Expo / React Native)
 
-A genuine native iOS + Android app for the iClose `/experience`. The screens are
+A genuine native iOS + Android app for the noelapp `/experience`. The screens are
 native (not a WebView): native navigation, gestures, a snap-paging discovery
 feed, native maps, haptics, and Supabase auth. It talks to your **existing**
 Next.js backend — the `/api/glass/*` routes and Supabase project are reused as-is.
@@ -121,7 +121,7 @@ eas submit --platform ios       # uploads to App Store Connect
 eas submit --platform android    # uploads to Play Console
 ```
 
-Replace the placeholder icons in `assets/` with real iClose artwork derived from
+Replace the placeholder icons in `assets/` with real noelapp artwork derived from
 `public/logo.svg` (1024×1024 `icon.png`, `adaptive-icon.png`, and `splash.png`).
 `npx expo-asset` or any 1024px export works.
 

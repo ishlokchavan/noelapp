@@ -280,7 +280,7 @@ export default function ShareDetailScreen() {
               <View className="mt-2 rounded-apple border border-white/60 bg-white/75 p-4">
                 <FeeRow label="Share amount" value={formatAed(fees.amount)} />
                 <FeeRow label="Purchase costs (3%)" value={formatAed(fees.purchaseCosts)} />
-                <FeeRow label="iClose platform fee (1.5%)" value={formatAed(fees.platformFee)} />
+                <FeeRow label="noelapp platform fee (1.5%)" value={formatAed(fees.platformFee)} />
                 <FeeRow label="DLD transfer fee (2%)" value={formatAed(fees.dldDiscounted)} strike={formatAed(fees.dldFull)} />
                 <View className="my-2 h-px bg-hairline/60" />
                 <FeeRow label="Total" value={formatAed(fees.total)} bold />

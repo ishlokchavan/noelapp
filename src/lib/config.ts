@@ -3,7 +3,7 @@ import Constants from 'expo-constants';
 const extra = (Constants.expoConfig?.extra ?? {}) as Record<string, string>;
 
 /**
- * Defaults point at the live iClose database (iclose-academy-db). The Supabase
+ * Defaults point at the live noelapp database (iclose-academy-db). The Supabase
  * anon key is a publishable client key — protected by row-level security — so it
  * ships in the app the same way it does on the web. Override any value via .env
  * (EXPO_PUBLIC_*) for a different environment.

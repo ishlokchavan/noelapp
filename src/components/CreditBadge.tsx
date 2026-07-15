@@ -3,7 +3,7 @@ import { Coins } from 'lucide-react-native';
 import type { CreditAward } from '@/types/listing';
 import { credits } from '@/lib/format';
 
-/** The signature iClose hook: commission you'd have paid, returned as credits. */
+/** The signature noelapp hook: commission you'd have paid, returned as credits. */
 export function CreditBadge({ award, large = false }: { award: CreditAward; large?: boolean }) {
   return (
     <View

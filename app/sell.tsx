@@ -127,7 +127,7 @@ export default function SellScreen() {
           <View className="h-16 w-16 items-center justify-center rounded-full bg-journey-listing/30"><Home size={30} color={colors.ink} /></View>
           <Text className="text-center text-2xl font-bold text-ink">List your home, commission-free</Text>
           <Text className="text-center text-base text-graphite">
-            Add your photos and ownership documents securely — it all happens through iClose. Our team verifies and publishes your home.
+            Add your photos and ownership documents securely — it all happens through noelapp. Our team verifies and publishes your home.
           </Text>
           {ready && !identity ? (
             <Pressable onPress={() => { router.back(); router.push('/(tabs)/profile'); }} className="mt-2 w-full flex-row items-center justify-center gap-2 rounded-apple bg-ink py-4">

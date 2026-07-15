@@ -47,7 +47,7 @@ export default function LedgerExplorer() {
         <View className="mx-4 mt-2 rounded-apple border border-white/60 bg-white/80 p-4">
           <View className="flex-row items-center gap-2">
             <Boxes size={16} color={colors.accent} />
-            <Text className="text-[13px] font-semibold text-ink">iClose Shares chain</Text>
+            <Text className="text-[13px] font-semibold text-ink">noelapp Shares chain</Text>
             <View className="ml-auto flex-row items-center gap-1 rounded-full bg-emerald-500/12 px-2 py-0.5">
               <ShieldCheck size={12} color="#059669" /><Text className="text-[10.5px] font-semibold text-emerald-700">Hash-linked</Text>
             </View>
