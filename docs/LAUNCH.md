@@ -43,26 +43,29 @@ Key facts
 - [ ] Confirm the **Google** provider is enabled for the same project
 
 ## 1. Point EAS at Jareth's Apple team
-Shlok is **Admin** on Jareth's team, so his Apple login can generate signing assets
-under Jareth's team. The Expo `owner` (`shlokchavan.personal`) stays as-is.
-- [ ] `eas credentials` → iOS → **production** → sign in with Apple → **pick
-      Jareth's team** → generate **Distribution Certificate** + **Provisioning
-      Profile** for `com.noelapp.ios` (EAS auto-registers the new bundle id under
-      Jareth's team, with Sign In with Apple enabled)
-- [ ] App Store Connect (Jareth's account) → **Integrations → App Store Connect API → +**
-      → new key, **App Manager** access → download the `.p8` (Shlok can create
-      this as Admin) → add to EAS when `eas submit` prompts
+Shlok is **Admin** on Jareth's team **and** holds a Jareth ASC **API key
+(`AuthKey_*.p8`)** — two independent ways to authenticate, so credential
+management under Jareth's team is covered. The Expo `owner`
+(`shlokchavan.personal`) stays as-is; it's independent of the Apple account.
 
-> **Personal-account caveat.** On an *individual* Apple Developer account, an
-> invited Admin can normally manage Certificates, Identifiers & Profiles — but
-> if `eas credentials` doesn't list Jareth's team, or cert/bundle-id creation
-> fails with a permissions error, that portal area is holder-only on his
-> account. **Fallback:** Jareth (account holder, full access) generates the
-> Distribution Certificate + a `com.noelapp.ios` provisioning profile himself,
-> exports the cert as a `.p12` (with its password) and the `.mobileprovision`,
-> and sends both to Shlok, who imports them via `eas credentials` → **Set up
-> from local files**. The ASC API key for submit likewise comes from Jareth if
-> Shlok can't create one. Signing still happens under Jareth's team either way.
+- [ ] Register the API key with EAS (keeps signing + submit login-free):
+      `eas credentials` → iOS → **production** → **App Store Connect: Manage
+      your API Key** → provide the `.p8` path, **Key ID** (10 chars, in the
+      filename) and **Issuer ID** (UUID at the top of App Store Connect →
+      Integrations → App Store Connect API). The `.p8` is gitignored — never
+      commit it.
+- [ ] `eas credentials` → iOS → **production** → **pick Jareth's team** →
+      generate **Distribution Certificate** + **Provisioning Profile** for
+      `com.noelapp.ios` (EAS auto-registers the new bundle id under Jareth's
+      team, with Sign In with Apple enabled). An Admin-access API key does this
+      directly; otherwise Shlok's Admin Apple-ID login does.
+
+> **If both auth paths somehow fail** (unusual, given Admin + API key): Jareth,
+> as account holder, generates the Distribution Certificate + a `com.noelapp.ios`
+> provisioning profile himself, exports the cert as a `.p12` (with its password)
+> and the `.mobileprovision`, and sends both to Shlok, who imports them via
+> `eas credentials` → **Set up from local files**. Signing still lands under
+> Jareth's team.
 
 ## 2. Build + create the App Store Connect record
 - [ ] `eas build --platform ios --profile production` (signs under Jareth's account)
