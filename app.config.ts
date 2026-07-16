@@ -2,7 +2,7 @@ import type { ExpoConfig } from 'expo/config';
 
 /**
  * Noel — native app config.
- * Bundle id com.noelapp.app (reverse-DNS of noelapp.com). Custom scheme `noelapp`
+ * Bundle id com.noelapp.ios (reverse-DNS of noelapp.com). Custom scheme `noelapp`
  * powers OAuth deep links (noelapp://auth-callback).
  * Brand-new App Store app — distinct from the legacy iClose app (ae.iclose.app),
  * which stays live. Backend (iclose-academy-db Supabase + iclose.ae API) is shared.
@@ -25,7 +25,7 @@ const config: ExpoConfig = {
   assetBundlePatterns: ['**/*'],
   ios: {
     supportsTablet: false,
-    bundleIdentifier: 'com.noelapp.app',
+    bundleIdentifier: 'com.noelapp.ios',
     usesAppleSignIn: true,
     // Declared explicitly so EAS's capability sync registers Sign In with Apple
     // on the App ID + provisioning profile (usesAppleSignIn alone wasn't detected).

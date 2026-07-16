@@ -1,25 +1,36 @@
 # Noel — iOS launch checklist
 
-Single source of truth for taking the new **Noel** app (`com.noelapp.app`) from
+Single source of truth for taking the new **Noel** app (`com.noelapp.ios`) from
 built `.ipa` to live on the App Store. The legacy **iClose** app
 (`ae.iclose.app`) is separate and stays live — nothing here touches it.
 
 Key facts
 - Display name: **Noel** · App Store name: **Noel: Property Feed**
-- Bundle id: **com.noelapp.app** · Scheme: **noelapp://**
+- Bundle id: **com.noelapp.ios** · Scheme: **noelapp://**
 - EAS project: **@shlokchavan.personal/noelapp** (`681d6f23-d39d-4407-b850-d7fafe484335`)
-- App Store Connect app: **6791083696** (submits via ASC API key, stored on EAS)
+  — the Expo account is independent of the Apple account; it can hold signing
+  credentials for any Apple team.
+- **Apple account: Edingrad** (deploying directly here; Shlok has **Admin**).
+  Signing certs + provisioning profile + the App Store Connect record all live
+  under Edingrad's team.
 - Backend (shared, unchanged): Supabase **iclose-academy-db**, API **iclose.ae**
 - Marketing site: **noelapp.com** · Support/Privacy: GitHub Pages on this repo
+
+> **Why `com.noelapp.ios` and not `com.noelapp.app`?** `com.noelapp.app` was
+> registered under Shlok's *personal* Apple team by an earlier build. A bundle
+> id is globally unique and can't move to Edingrad's team while the personal
+> team holds it, and Apple permanently reserves deleted bundle ids — so we ship
+> a fresh id on Edingrad instead. The app was never released, so nothing is
+> lost. The abandoned personal app (`6791083696`) can be removed later.
 
 ---
 
 ## ✅ Done (in this repo)
 - [x] Brand renamed iClose → Noel (display) with noelapp as the technical handle
-- [x] iOS bundle id `com.noelapp.app`, scheme/slug `noelapp`, version `1.0.0`
+- [x] iOS bundle id `com.noelapp.ios`, scheme/slug `noelapp`, version `1.0.0`
 - [x] EAS project created + `projectId`/`owner` wired into `app.config.ts`
-- [x] Apple bundle id registered, Sign In with Apple, cert + provisioning profile
-- [x] iOS `.ipa` built on EAS
+- [x] Sign In with Apple entitlement declared (`app.config.ts`) — EAS registers
+      it on the new App ID + provisioning profile under Edingrad's team
 - [x] Brand art: `N.` icon + `Noel` splash
 - [x] App Store listing copy (name, subtitle, promo, description) — `APP_STORE_LISTING.md`
 
@@ -27,21 +38,34 @@ Key facts
 - [ ] **Supabase → Authentication → URL Configuration → Redirect URLs:** add
       `noelapp://auth-callback`
 - [ ] **Supabase → Authentication → Providers → Apple → Authorized Client IDs:**
-      add `com.noelapp.app` (native Sign In with Apple validates against the
-      bundle id; the old `ae.iclose.app`-only config rejects Noel's tokens)
+      add `com.noelapp.ios` (native Sign In with Apple validates the token
+      audience against the bundle id; without it Noel's tokens are rejected)
 - [ ] Confirm the **Google** provider is enabled for the same project
 
-## 1. App Store Connect app record
-- [x] Created via `eas submit` → ASC App ID **6791083696** (`com.noelapp.app`)
-- [x] `ascAppId` wired into `eas.json` so future submits skip the Apple-login step
+## 1. Point EAS at Edingrad's Apple team
+Shlok is **Admin** on Edingrad, so his Apple login can generate signing assets
+under Edingrad's team. The Expo `owner` (`shlokchavan.personal`) stays as-is.
+- [ ] `eas credentials` → iOS → **production** → sign in with Apple → **pick
+      Edingrad's team** → generate **Distribution Certificate** + **Provisioning
+      Profile** for `com.noelapp.ios` (EAS auto-registers the new bundle id under
+      Edingrad, with Sign In with Apple enabled)
+- [ ] App Store Connect (Edingrad) → **Integrations → App Store Connect API → +**
+      → new key, **App Manager** access → download the `.p8` (Shlok can create
+      this as Admin) → add to EAS when `eas submit` prompts
 
-## 2. Upload the build → TestFlight
-- [x] `eas submit --platform ios --latest` → binary uploaded, Apple processing
+## 2. Build + create the App Store Connect record
+- [ ] `eas build --platform ios --profile production` (signs under Edingrad)
+- [ ] `eas submit --platform ios --profile production` → EAS **creates a fresh
+      ASC app record** under Edingrad and uploads the build
+- [ ] Copy the new **ASC App ID** it prints back into `eas.json`
+      (`submit.production.ios.ascAppId`) so future submits skip the prompt
+
+## 3. Upload the build → TestFlight
 - [ ] Wait for the "processing complete" email (~5–10 min), add yourself as a tester
 - [ ] Install and verify: new **N.** icon, **Noel** splash, browse + **sign-in works**
       (sign-in needs the Supabase fix above)
 
-## 3. Store listing assets
+## 4. Store listing assets
 - [ ] Screenshots — iPhone only (`supportsTablet: false`): 6.9"/6.7" + 6.5" sizes
 - [ ] Host privacy + support pages: repo **Settings → Pages** → branch `main`,
       folder `/docs` → live at `https://ishlokchavan.github.io/noelapp/{privacy-policy,support}.html`
@@ -49,12 +73,13 @@ Key facts
 - [ ] Paste name/subtitle/description/keywords/URLs from `APP_STORE_LISTING.md`
 - [ ] App Privacy answers (in `APP_STORE_LISTING.md`) · Category: Lifestyle · Age 4+
 
-## 4. Compliance
+## 5. Compliance
 - [ ] **EU trader status** — App Store Connect → **Business** (required by the DSA
-      to distribute in the EU; doesn't block TestFlight)
+      to distribute in the EU; doesn't block TestFlight). Note this is now
+      **Edingrad's** trader info, not Shlok's.
 - [ ] Export compliance: `usesNonExemptEncryption: false` is already set
 
-## 5. Submit for review
+## 6. Submit for review
 - [ ] Attach the TestFlight build, complete "App Review Information" notes
       (reviewer test steps are in `APP_STORE_LISTING.md`), submit
 
