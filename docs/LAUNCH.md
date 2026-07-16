@@ -10,17 +10,17 @@ Key facts
 - EAS project: **@shlokchavan.personal/noelapp** (`681d6f23-d39d-4407-b850-d7fafe484335`)
   — the Expo account is independent of the Apple account; it can hold signing
   credentials for any Apple team.
-- **Apple account: Edingrad** (deploying directly here; Shlok has **Admin**).
+- **Apple account: Jareth's personal account** (deploying directly here; Shlok has **Admin**).
   Signing certs + provisioning profile + the App Store Connect record all live
-  under Edingrad's team.
+  under Jareth's team.
 - Backend (shared, unchanged): Supabase **iclose-academy-db**, API **iclose.ae**
 - Marketing site: **noelapp.com** · Support/Privacy: GitHub Pages on this repo
 
 > **Why `com.noelapp.ios` and not `com.noelapp.app`?** `com.noelapp.app` was
 > registered under Shlok's *personal* Apple team by an earlier build. A bundle
-> id is globally unique and can't move to Edingrad's team while the personal
+> id is globally unique and can't move to Jareth's team while the personal
 > team holds it, and Apple permanently reserves deleted bundle ids — so we ship
-> a fresh id on Edingrad instead. The app was never released, so nothing is
+> a fresh id on Jareth's team instead. The app was never released, so nothing is
 > lost. The abandoned personal app (`6791083696`) can be removed later.
 
 ---
@@ -30,7 +30,7 @@ Key facts
 - [x] iOS bundle id `com.noelapp.ios`, scheme/slug `noelapp`, version `1.0.0`
 - [x] EAS project created + `projectId`/`owner` wired into `app.config.ts`
 - [x] Sign In with Apple entitlement declared (`app.config.ts`) — EAS registers
-      it on the new App ID + provisioning profile under Edingrad's team
+      it on the new App ID + provisioning profile under Jareth's team
 - [x] Brand art: `N.` icon + `Noel` splash
 - [x] App Store listing copy (name, subtitle, promo, description) — `APP_STORE_LISTING.md`
 
@@ -42,21 +42,32 @@ Key facts
       audience against the bundle id; without it Noel's tokens are rejected)
 - [ ] Confirm the **Google** provider is enabled for the same project
 
-## 1. Point EAS at Edingrad's Apple team
-Shlok is **Admin** on Edingrad, so his Apple login can generate signing assets
-under Edingrad's team. The Expo `owner` (`shlokchavan.personal`) stays as-is.
+## 1. Point EAS at Jareth's Apple team
+Shlok is **Admin** on Jareth's team, so his Apple login can generate signing assets
+under Jareth's team. The Expo `owner` (`shlokchavan.personal`) stays as-is.
 - [ ] `eas credentials` → iOS → **production** → sign in with Apple → **pick
-      Edingrad's team** → generate **Distribution Certificate** + **Provisioning
+      Jareth's team** → generate **Distribution Certificate** + **Provisioning
       Profile** for `com.noelapp.ios` (EAS auto-registers the new bundle id under
-      Edingrad, with Sign In with Apple enabled)
-- [ ] App Store Connect (Edingrad) → **Integrations → App Store Connect API → +**
+      Jareth's team, with Sign In with Apple enabled)
+- [ ] App Store Connect (Jareth's account) → **Integrations → App Store Connect API → +**
       → new key, **App Manager** access → download the `.p8` (Shlok can create
       this as Admin) → add to EAS when `eas submit` prompts
 
+> **Personal-account caveat.** On an *individual* Apple Developer account, an
+> invited Admin can normally manage Certificates, Identifiers & Profiles — but
+> if `eas credentials` doesn't list Jareth's team, or cert/bundle-id creation
+> fails with a permissions error, that portal area is holder-only on his
+> account. **Fallback:** Jareth (account holder, full access) generates the
+> Distribution Certificate + a `com.noelapp.ios` provisioning profile himself,
+> exports the cert as a `.p12` (with its password) and the `.mobileprovision`,
+> and sends both to Shlok, who imports them via `eas credentials` → **Set up
+> from local files**. The ASC API key for submit likewise comes from Jareth if
+> Shlok can't create one. Signing still happens under Jareth's team either way.
+
 ## 2. Build + create the App Store Connect record
-- [ ] `eas build --platform ios --profile production` (signs under Edingrad)
+- [ ] `eas build --platform ios --profile production` (signs under Jareth's account)
 - [ ] `eas submit --platform ios --profile production` → EAS **creates a fresh
-      ASC app record** under Edingrad and uploads the build
+      ASC app record** under Jareth's account and uploads the build
 - [ ] Copy the new **ASC App ID** it prints back into `eas.json`
       (`submit.production.ios.ascAppId`) so future submits skip the prompt
 
@@ -76,7 +87,7 @@ under Edingrad's team. The Expo `owner` (`shlokchavan.personal`) stays as-is.
 ## 5. Compliance
 - [ ] **EU trader status** — App Store Connect → **Business** (required by the DSA
       to distribute in the EU; doesn't block TestFlight). Note this is now
-      **Edingrad's** trader info, not Shlok's.
+      **Jareth's** trader info, not Shlok's.
 - [ ] Export compliance: `usesNonExemptEncryption: false` is already set
 
 ## 6. Submit for review

@@ -4,14 +4,14 @@ Paste these into App Store Connect → Distribution → iOS App → 1.0.0.
 Character limits noted in parentheses.
 
 ## New app identity (create a fresh App Store Connect record)
-- **Bundle ID:** `com.noelapp.ios`, registered under **Edingrad's** team (EAS
+- **Bundle ID:** `com.noelapp.ios`, registered under **Jareth's** team (EAS
   auto-registers it during the first production build — see `LAUNCH.md`).
 - This is a **brand-new app**, separate from the legacy iClose app
   (`ae.iclose.app`, ASC id `6783816832`), which stays live. Do **not** reuse the
   old app record or its ascAppId.
 - Backend is unchanged: same Supabase project (`iclose-academy-db`) and API.
 - The App Store Connect record is created by the first `eas submit` under
-  Edingrad's account; copy the new **ASC App ID** it prints into `eas.json`
+  Jareth's account; copy the new **ASC App ID** it prints into `eas.json`
   (`submit.production.ios.ascAppId`). The earlier personal-account record
   `6791083696` (`com.noelapp.app`) is abandoned and can be removed.
 
